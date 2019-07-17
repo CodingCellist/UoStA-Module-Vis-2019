@@ -10,3 +10,6 @@ diagrams/
 # Python virtual environments
 venv/
 
+# Old files
+old/
+
