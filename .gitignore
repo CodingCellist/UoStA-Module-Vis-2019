@@ -1,0 +1,12 @@
+# JetBrains IDE files
+.idea/
+
+# Dia lock files
+*.dia~
+
+# "Compiled" diagrams
+diagrams/
+
+# Python virtual environments
+venv/
+
