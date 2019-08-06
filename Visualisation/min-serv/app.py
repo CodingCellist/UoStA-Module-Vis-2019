@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flaskext.mysql import MySQL
+import json
 
 
 app = Flask(__name__)
@@ -18,14 +19,14 @@ mariadb.init_app(app)
 def nodes_to_json(nodes):
     node_array = []
     for node in nodes:
-        node_array.append('{id: "%s", group: %s}' % (node[0], get_group(node[0])))
+        node_array.append('{"id": "%s", "group": %s}' % (node[0], get_group(node[0])))
     return str(node_array)
 
 
 def links_to_json(links):
     link_array = []
     for src, tgt in links:
-        link_array.append('{source: "%s", target: "%s"}' % (src, tgt))
+        link_array.append('{"source": "%s", "target": "%s"}' % (src, tgt))
     return str(link_array)
 
 
@@ -45,9 +46,11 @@ def links():
     raw_nodes = cursor.fetchall()
     cursor.execute('SELECT source_module, TargetModule FROM complete_requisites;')
     raw_links = cursor.fetchall()
-    print(nodes_to_json(raw_nodes))
-    print(links_to_json(raw_links))
-    return 'WIP'
+    nodes = str(nodes_to_json(raw_nodes)).replace("'", "")
+    links = str(links_to_json(raw_links)).replace("'", "")
+    network = '{"nodes": %s, "links": %s}' % (nodes, links)
+    # print(network)
+    return json.loads(network)
 
 
 if __name__ == '__main__':
