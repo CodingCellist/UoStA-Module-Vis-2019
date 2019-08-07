@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flaskext.mysql import MySQL
 import json
 
@@ -39,18 +39,38 @@ def get_group(module_code):
         return 3
 
 
-@app.route('/links', methods=['GET'])
-def links():
+def query_db():
     cursor = db_conn.cursor()
     cursor.execute('SELECT `code` FROM `module`;')
     raw_nodes = cursor.fetchall()
-    cursor.execute('SELECT source_module, TargetModule FROM complete_requisites;')
+    cursor.execute(
+        'SELECT source_module, TargetModule FROM complete_requisites;')
     raw_links = cursor.fetchall()
     nodes = str(nodes_to_json(raw_nodes)).replace("'", "")
     links = str(links_to_json(raw_links)).replace("'", "")
+    return nodes, links
+
+
+@app.route('/data', methods=['GET'])
+def data():
+    nodes, links = query_db()
     network = '{"nodes": %s, "links": %s}' % (nodes, links)
     # print(network)
     return json.loads(network)
+
+
+@app.route('/fd-graph', methods=['GET'])
+def fd_graph():
+    nodes, links = query_db()
+    network = '{"nodes": %s, "links": %s}' % (nodes, links)
+    return render_template('fd-graph.html', network=json.loads(network))
+
+
+@app.route('/force-directed', methods=['GET'])
+def force_directed():
+    nodes, links = query_db()
+    network = '{"nodes": %s, "links": %s}' % (nodes, links)
+    return render_template('force-directed.html', network=network)
 
 
 if __name__ == '__main__':
