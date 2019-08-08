@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Column-oriented layout</title>
+
+    <style>
+        .links line {
+            stroke: #999999;
+            stroke-opacity: 0.6;
+        }
+
+        .nodes circle {
+            stroke: #ffffff;
+            stroke-width: 1.5px;
+        }
+    </style>
+</head>
+<body>
+<script>
+    const dimensions = ['1000-level', '2000-level', '3000-level', '4000-level', '5000-level'];
+
+    const my_data = {{ network|safe }};
+    console.log(my_data);
+
+
+    // attrs of svg
+    const width = 960;
+    const height = 960;
+
+    const xMargin = width / 10;
+    const yMargin = height / 10;
+
+    // D3 stuff
+    let svg = d3.select("body")
+                .append("div")
+                .attr("id", "fd-graph")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+    // colour "grouping"
+    let color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    // construct the scales
+    let xs = d3.scalePoint(dimensions, [xMargin, width - xMargin]);
+    let ys = {};
+    for (i in dimensions) {
+        let name = dimensions[i];
+        ys[name] = d3.scalePoint()
+    }
+
+    let sets = [];
+    for (i = 1; i <= 5; i++) {
+        sets[i - 1] = _.filter(my_data.nodes, d => +d.id[2] === i);
+    }
+
+    console.log(sets);
+
+</script>
+</body>
+</html>
