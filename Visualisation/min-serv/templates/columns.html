@@ -116,7 +116,6 @@
 
     // cubic bezier links
     let horizontalLinkGenerator = d3.linkHorizontal();
-    let verticalLinkGenerator = d3.linkVertical();
     let cubicLinks = svg.selectAll("myCubicLinks")
         .data(my_data.links)
         .enter()
@@ -134,9 +133,16 @@
                     "target": [x2, y2]
                 };
 
-                // if the link is vertical, use the vertical generator
+                // if the link is vertical do things manually
                 if (x1 === x2) {
-                    return verticalLinkGenerator(coords);
+                    let diff = xScale(2) - xScale(1);
+                    let cpX = x1 - diff / 2,
+                        cpY = y1 > y2
+                                ? y2 + (y1 - y2) / 2
+                                : y1 + (y2 - y1) / 2;
+                    return "M" + x1 + "," + y1
+                        + " Q" + cpX + "," + cpY
+                        + " " + x2 + "," + y2;
                 } else {
                     return horizontalLinkGenerator(coords);
                 }
