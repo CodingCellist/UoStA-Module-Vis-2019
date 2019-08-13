@@ -66,8 +66,8 @@
         .append("g")
             .attr("transform", function (d) {
                 // return "translate(" + d.key * 5 * nodeRadius + ", 0)";
-                console.log(d.key);
-                console.log(xScale(d.key));
+                // console.log(d.key);
+                // console.log(xScale(d.key));
                 return "translate(" + xScale(d.key) + ", 0)";
             });
 
@@ -77,6 +77,9 @@
         })
         .enter()
         .append("circle")
+            .attr("id", function (d) {
+                return d.id;
+            })
             .attr("cy", function (d, i) {
                 return nodeRadius + i * 2 * nodeRadius;
                 // bottom-alignment:
@@ -90,6 +93,56 @@
             .text(function (d) {
                 return d.id;
             });
+
+    // linear links
+    // let links = svg.selectAll("myLinks")
+    //     .data(my_data.links)
+    //     .enter()
+    //     .append("line")
+    //         .attr("x1", function (d) {
+    //             return xScale(parseInt(d.source[2]));
+    //         })
+    //         .attr("y1", function (d) {
+    //             return parseFloat(d3.select("#" + d.source).attr("cy"));
+    //         })
+    //         .attr("x2", function (d) {
+    //             return xScale(parseInt(d.target[2]));
+    //         })
+    //         .attr("y2", function (d) {
+    //             return parseFloat(d3.select("#" + d.target).attr("cy"));
+    //         })
+    //         .attr("stroke", "#999999")
+    //         .attr("stroke-fill", "0.7");
+
+    // cubic bezier links
+    let horizontalLinkGenerator = d3.linkHorizontal();
+    let verticalLinkGenerator = d3.linkVertical();
+    let cubicLinks = svg.selectAll("myCubicLinks")
+        .data(my_data.links)
+        .enter()
+        .append("path")
+            .attr("d", function (d) {
+                // find the coordinates, with translation
+                let x1 = xScale(parseInt(d.source[2])),
+                    y1 = parseFloat(d3.select("#" + d.source).attr("cy")),
+                    x2 = xScale(parseInt(d.target[2])),
+                    y2 = parseFloat(d3.select("#" + d.target).attr("cy"));
+
+                // store the coordinates in an object
+                let coords = {
+                    "source": [x1, y1],
+                    "target": [x2, y2]
+                };
+
+                // if the link is vertical, use the vertical generator
+                if (x1 === x2) {
+                    return verticalLinkGenerator(coords);
+                } else {
+                    return horizontalLinkGenerator(coords);
+                }
+            })
+            .attr("stroke", "#999999")
+            .attr("fill", "none");
 
 </script>
 </body>
