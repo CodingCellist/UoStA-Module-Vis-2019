@@ -20,11 +20,16 @@
 </head>
 <body>
 <script>
-    const dimensions = ['1000-level', '2000-level', '3000-level', '4000-level', '5000-level'];
-
     const my_data = {{ network|safe }};
     console.log(my_data);
 
+    let nestedLevels = d3.nest()
+        .key(function (d) {
+            return d.id[2];
+        })
+        .entries(my_data.nodes);
+
+    console.log(nestedLevels);
 
     // attrs of svg
     const width = 960;
@@ -41,23 +46,26 @@
                 .attr("width", width)
                 .attr("height", height);
 
-    // colour "grouping"
-    let color = d3.scaleOrdinal(d3.schemeCategory10);
+    const nodeRadius = 5;
 
-    // construct the scales
-    let xs = d3.scalePoint(dimensions, [xMargin, width - xMargin]);
-    let ys = {};
-    for (i in dimensions) {
-        let name = dimensions[i];
-        ys[name] = d3.scalePoint()
-    }
+    let levelGroups = svg.selectAll("myGroups")
+        .data(nestedLevels)
+        .enter()
+        .append("g")
+            .attr("transform", function (d) {
+                return "translate(" + d.key * 5 * nodeRadius + ", 0)";
+            });
 
-    let sets = [];
-    for (i = 1; i <= 5; i++) {
-        sets[i - 1] = _.filter(my_data.nodes, d => +d.id[2] === i);
-    }
-
-    console.log(sets);
+    let circles = levelGroups.selectAll("myCircles")
+        .data(function (d) {
+            return d.values;
+        })
+        .enter()
+        .append("circle")
+            .attr("cy", function (d, i) {
+                return i * 2 * nodeRadius;
+            })
+            .attr("r", nodeRadius);
 
 </script>
 </body>
