@@ -54,6 +54,12 @@
         [xMargin + nodeRadius, width - xMargin - nodeRadius]
     );
 
+    // colour-coding the groups
+    let schoolCodes = _.uniqBy(my_data.nodes, function (n) {
+        return n.id.substring(0, 2);
+    });
+    let colours = d3.scaleOrdinal(schoolCodes, d3.schemeCategory10);
+
     let levelGroups = svg.selectAll("myGroups")
         .data(nestedLevels)
         .enter()
@@ -76,7 +82,14 @@
                 // bottom-alignment:
                 // return width - yMargin - (nodeRadius + i * 2 * nodeRadius);
             })
-            .attr("r", nodeRadius);
+            .attr("r", nodeRadius)
+            .attr("fill", function (d) {
+                return colours(d.id.substring(0, 2))
+            })
+        .append("title")
+            .text(function (d) {
+                return d.id;
+            });
 
 </script>
 </body>
