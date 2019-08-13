@@ -7,29 +7,46 @@
     <title>Column-oriented layout</title>
 
     <style>
-        .links line {
-            stroke: #999999;
-            stroke-opacity: 0.6;
+        path {
+            fill: none;
+            stroke-opacity: 0.7;
         }
 
-        .nodes circle {
-            stroke: #ffffff;
-            stroke-width: 1.5px;
+        .pre-req path {
+            stroke: forestgreen;
+        }
+
+        .anti-req path {
+            stroke: crimson;
+        }
+
+        .co-req path {
+            stroke: cornflowerblue;
         }
     </style>
 </head>
 <body>
 <script>
-    const my_data = {{ network|safe }};
-    console.log(my_data);
+    const MY_DATA = {{ network|safe }};
+    console.log(MY_DATA);
 
-    let nestedLevels = d3.nest()
+    // nest the modules by their level, i.e. the 3rd char in their name
+    let nestedModules = d3.nest()
         .key(function (d) {
             return d.id[2];
         })
-        .entries(my_data.nodes);
+        .entries(MY_DATA.nodes);
 
-    console.log(nestedLevels);
+    console.log(nestedModules);
+
+    // nest the links by their type, i.e. "Pre", "Anti", and "Co"
+    let nestedLinks = d3.nest()
+        .key(function (d) {
+            return d.type;
+        })
+        .entries(MY_DATA.links);
+
+    console.log(nestedLinks);
 
     // attrs of svg
     const width = 960;
@@ -50,24 +67,26 @@
 
     // equal x-spacing (may want to change this to d3.scaleBand when doing rects)
     let xScale = d3.scalePoint(
-        _.map(nestedLevels, 'key'),
+        _.map(nestedModules, 'key'),
         [xMargin + nodeRadius, width - xMargin - nodeRadius]
     );
 
     // colour-coding the groups
-    let schoolCodes = _.uniqBy(my_data.nodes, function (n) {
+    let schoolCodes = _.uniqBy(MY_DATA.nodes, function (n) {
         return n.id.substring(0, 2);
     });
     let colours = d3.scaleOrdinal(schoolCodes, d3.schemeCategory10);
 
+    ///////////////////
+    // NODE CREATION //
+    ///////////////////
+
     let levelGroups = svg.selectAll("myGroups")
-        .data(nestedLevels)
+        .data(nestedModules)
         .enter()
         .append("g")
             .attr("transform", function (d) {
-                // return "translate(" + d.key * 5 * nodeRadius + ", 0)";
-                // console.log(d.key);
-                // console.log(xScale(d.key));
+                // translate wrt. the scale defined through d3
                 return "translate(" + xScale(d.key) + ", 0)";
             });
 
@@ -94,30 +113,24 @@
                 return d.id;
             });
 
-    // linear links
-    // let links = svg.selectAll("myLinks")
-    //     .data(my_data.links)
-    //     .enter()
-    //     .append("line")
-    //         .attr("x1", function (d) {
-    //             return xScale(parseInt(d.source[2]));
-    //         })
-    //         .attr("y1", function (d) {
-    //             return parseFloat(d3.select("#" + d.source).attr("cy"));
-    //         })
-    //         .attr("x2", function (d) {
-    //             return xScale(parseInt(d.target[2]));
-    //         })
-    //         .attr("y2", function (d) {
-    //             return parseFloat(d3.select("#" + d.target).attr("cy"));
-    //         })
-    //         .attr("stroke", "#999999")
-    //         .attr("stroke-fill", "0.7");
+    ///////////////////
+    // LINK CREATION //
+    ///////////////////
+
+    let linkGroups = svg.selectAll("linkGroups")
+        .data(nestedLinks)
+        .enter()
+        .append("g")
+            .attr("class", function (d) {
+                return d.key.toLowerCase() + "-req";
+            });
 
     // cubic bezier links
     let horizontalLinkGenerator = d3.linkHorizontal();
-    let cubicLinks = svg.selectAll("myCubicLinks")
-        .data(my_data.links)
+    let cubicLinks = linkGroups.selectAll("myCubicLinks")
+        .data(function (d) {
+            return d.values;
+        })
         .enter()
         .append("path")
             .attr("d", function (d) {
@@ -133,8 +146,8 @@
                     "target": [x2, y2]
                 };
 
-                // if the link is vertical do things manually
                 if (x1 === x2) {
+                    // if the link is vertical do things manually
                     let diff = xScale(2) - xScale(1);
                     let cpX = x1 - diff / 2,
                         cpY = y1 > y2
@@ -146,9 +159,7 @@
                 } else {
                     return horizontalLinkGenerator(coords);
                 }
-            })
-            .attr("stroke", "#999999")
-            .attr("fill", "none");
+            });
 
 </script>
 </body>
