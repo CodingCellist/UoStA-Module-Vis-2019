@@ -48,12 +48,21 @@
 
     const nodeRadius = 5;
 
+    // equal x-spacing (may want to change this to d3.scaleBand when doing rects)
+    let xScale = d3.scalePoint(
+        _.map(nestedLevels, 'key'),
+        [xMargin + nodeRadius, width - xMargin - nodeRadius]
+    );
+
     let levelGroups = svg.selectAll("myGroups")
         .data(nestedLevels)
         .enter()
         .append("g")
             .attr("transform", function (d) {
-                return "translate(" + d.key * 5 * nodeRadius + ", 0)";
+                // return "translate(" + d.key * 5 * nodeRadius + ", 0)";
+                console.log(d.key);
+                console.log(xScale(d.key));
+                return "translate(" + xScale(d.key) + ", 0)";
             });
 
     let circles = levelGroups.selectAll("myCircles")
@@ -63,7 +72,9 @@
         .enter()
         .append("circle")
             .attr("cy", function (d, i) {
-                return i * 2 * nodeRadius;
+                return nodeRadius + i * 2 * nodeRadius;
+                // bottom-alignment:
+                // return width - yMargin - (nodeRadius + i * 2 * nodeRadius);
             })
             .attr("r", nodeRadius);
 
