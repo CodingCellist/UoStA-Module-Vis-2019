@@ -67,7 +67,7 @@
     // let link = svg.append("g")
     //                 .attr("class", "links")
     //                 .selectAll("line")
-    //                 .data(my_data.links)
+    //                 .data(MY_DATA.links)
     //                 .enter()
     //                 .append("line");
 
@@ -92,7 +92,7 @@
         .enter()
         .append("line");
 
-    // create the nodes based on the "nodes" array in `my_data`
+    // create the nodes based on the "nodes" array in `MY_DATA`
     let node = svg.append("g")
                     .attr("class", "nodes")
         .selectAll("circle")
@@ -113,12 +113,12 @@
         .append("title")
         .text(d => d.id);
 
-    // associate the nodes from `my_data` with the force simulation
+    // associate the nodes from `MY_DATA` with the force simulation
     forceSim
         .nodes(my_data.nodes)
         .on("tick", ticked);
 
-    // associate the links from `my_data` with the force simulation
+    // associate the links from `MY_DATA` with the force simulation
     forceSim
         .force("link")
         .links(my_data.links);
