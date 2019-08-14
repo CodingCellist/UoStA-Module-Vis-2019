@@ -17,7 +17,7 @@
         }
 
         circle.highlighted {
-            outline-color: black;
+            stroke: black;
             outline-width: 2pt;
         }
 
@@ -246,33 +246,11 @@
         toHighlight.highlightLinks.forEach(function (d) {
             svg.selectAll("#" + d).classed("highlighted", true);
         })
-
-        // svg.selectAll("highlightedNodes")
-        //     .data(toHighlight.highlightNodes)
-        //     .enter()
-        //     .selectAll(function (d) {
-        //         return "#" + d;
-        //     })
-        //     .classed("highlighted", true);
-        //
-        // svg.selectAll("highlightedLinks")
-        //     .data(toHighlight.highlightLinks)
-        //     .enter()
-        //     .selectAll(function (d) {
-        //         return "#" + d;
-        //     })
-        //     .classed("highlighted", true);
     }
 
     function mouseout(d) {
         svg.selectAll(".highlighted")
             .classed("highlighted", false);
-
-        // circles.selectAll(".circle")
-        //     .classed("highlighted", false);
-        //
-        // cubicLinks.selectAll(".path")
-        //     .classed("highlighted", false);
     }
 
 </script>
