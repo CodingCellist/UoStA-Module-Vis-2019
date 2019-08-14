@@ -152,6 +152,9 @@
         })
         .enter()
         .append("path")
+            .attr("id", function (d) {
+                return d.source + "--" + d.target;
+            })
             .attr("d", function (d) {
                 // find the coordinates, with translation
                 let x1 = xScale(parseInt(d.source[2])),
@@ -185,24 +188,31 @@
     ////////////
 
     // helper function to find all paths leading to the given node
-    function tailRec({nodes, links}, nodeID, tail) {
+    function tailRec({nodes, links}, nodeID, nodeTail, linkTail) {
         console.log("NODE: " + nodeID);
-        console.log(tail);
-        tail.push(nodeID);
-        console.log(tail);
+        // console.log(nodeTail);
+        nodeTail.push(nodeID);
+        // console.log(nodeTail);
         let targets =
             _.uniq(
                 links
                     .filter(function (link) {
-                        if (link.source === nodeID && !(_.includes(tail, link.target))) {
+                        if (link.source === nodeID && !(_.includes(nodeTail, link.target))) {
                             // if it's a link we care about
                             if (link.source[2] === "1" && link.type.toLowerCase() === "anti") {
                                 // if we're at 1000-level, only do anti-reqs on
                                 // the same level, i.e. don't go back up
-                                return link.target[2] === "1";
+                                // linkTail.push(link);
+                                if (link.target[2] === "1") {
+                                    linkTail.push(link.source + "--" + link.target);
+                                    return true;
+                                }
+                                return false;
                             }
                             // return true if not at 1000-level, as we just need
                             // to find the link
+                            // linkTail.push(link);
+                            linkTail.push(link.source + "--" + link.target);
                             return true;
                         }
                         // else, not a link we care about (link.source !== nodeID)
@@ -213,14 +223,16 @@
                         return link.target;
                     })
             );
-        console.log("targets:");
-        console.log(targets);
+        // console.log("targets:");
+        // console.log(targets);
+        linkTail = _.uniq(linkTail);
         if (targets.length > 0) {
             for (i in targets) {
                 let nextTarget = targets[i];
-                tailRec({nodes, links}, nextTarget, tail);
+                tailRec({nodes, links}, nextTarget, nodeTail, linkTail);
             }
         }
+        return {"highlightNodes": nodeTail, "highlightLinks": linkTail};
     }
 
     function mouseover(d) {
