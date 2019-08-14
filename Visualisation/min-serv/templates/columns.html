@@ -9,7 +9,16 @@
     <style>
         path {
             fill: none;
+            stroke-opacity: 0.35;
+        }
+
+        .highlighted path {
             stroke-opacity: 0.7;
+        }
+
+        .highlighted circle {
+            outline-color: black;
+            outline-width: 2px;
         }
 
         .pre-req path {
@@ -27,8 +36,13 @@
 </head>
 <body>
 <script>
+    // data put in by jinja2
     const MY_DATA = {{ network|safe }};
     console.log(MY_DATA);
+
+    ////////////////////
+    // PRE-PROCESSING //
+    ////////////////////
 
     // nest the modules by their level, i.e. the 3rd char in their name
     let nestedModules = d3.nest()
@@ -39,14 +53,18 @@
 
     console.log(nestedModules);
 
-    // nest the links by their type, i.e. "Pre", "Anti", and "Co"
+    // nest the links by their type, i.e. "pre", "anti", and "co"
     let nestedLinks = d3.nest()
         .key(function (d) {
-            return d.type;
+            return d.type.toLowerCase();
         })
         .entries(MY_DATA.links);
 
     console.log(nestedLinks);
+
+    ///////////
+    // SETUP //
+    ///////////
 
     // attrs of svg
     const width = 960;
@@ -108,6 +126,7 @@
             .attr("fill", function (d) {
                 return colours(d.id.substring(0, 2))
             })
+            .on("mouseover", mouseover)
         .append("title")
             .text(function (d) {
                 return d.id;
@@ -122,7 +141,7 @@
         .enter()
         .append("g")
             .attr("class", function (d) {
-                return d.key.toLowerCase() + "-req";
+                return d.key + "-req";
             });
 
     // cubic bezier links
@@ -160,6 +179,91 @@
                     return horizontalLinkGenerator(coords);
                 }
             });
+
+    ////////////
+    // EVENTS //
+    ////////////
+
+    // helper function to find all paths leading to the given node
+    function tailRec({nodes, links}, nodeID, tail) {
+        console.log("NODE: " + nodeID);
+        console.log(tail);
+        tail.push(nodeID);
+        console.log(tail);
+        let targets =
+            _.uniq(
+                links
+                    .filter(function (link) {
+                        if (link.source === nodeID && !(_.includes(tail, link.target))) {
+                            // if it's a link we care about
+                            if (link.source[2] === "1" && link.type.toLowerCase() === "anti") {
+                                // if we're at 1000-level, only do anti-reqs on
+                                // the same level, i.e. don't go back up
+                                return link.target[2] === "1";
+                            }
+                            // return true if not at 1000-level, as we just need
+                            // to find the link
+                            return true;
+                        }
+                        // else, not a link we care about (link.source !== nodeID)
+                        return false;
+                    })
+                    .map(function (link) {
+                        // retrieve the targets
+                        return link.target;
+                    })
+            );
+        console.log("targets:");
+        console.log(targets);
+        if (targets.length > 0) {
+            for (i in targets) {
+                let nextTarget = targets[i];
+                tailRec({nodes, links}, nextTarget, tail);
+            }
+        }
+    }
+
+    // "CLOSE BUT NO CIGAR"-ATTEMPT AT THE FUNCTION ABOVE
+    // let targeted = [];
+    // function test({nodes, links}, nodeID) {
+    //     console.log("NODE: " + nodeID.toUpperCase());
+    //     targeted.push(nodeID);
+    //     let targets = _.uniq(
+    //         links.filter(function (link) {
+    //             if (link.source[2] === "1") {
+    //                 return link.type.toLowerCase() !== "anti" && link.source === nodeID;
+    //             }
+    //             return link.source === nodeID;
+    //         })
+    //             .map(l => l.target)
+    //     );
+    //     console.log("targets");
+    //     console.log(targets);
+    //     if (targets.length > 0) {
+    //         for (i in targets) {
+    //             let nextTarget = targets[i];
+    //             if (!(_.includes(targeted, nextTarget))) test({nodes, links}, nextTarget);
+    //         }
+    //     }
+    // }
+
+    // PLAYING WITH THE IDEA OF CONSTRUCTING A HIERARCHY "FROM THE FRONT"
+    // function findChildren({nodes, links}, nodeID) {
+    //     return _.uniq(
+    //         links
+    //         .filter(function (l) {
+    //             return l.target === nodeID;
+    //         })
+    //         .map(function (l) {
+    //             return l.source;
+    //         })
+    //     )
+    // }
+
+    function mouseover(d) {
+        // TODO
+        // console.log(d);
+    }
 
 </script>
 </body>
