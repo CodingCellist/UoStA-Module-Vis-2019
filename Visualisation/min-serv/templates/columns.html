@@ -9,16 +9,16 @@
     <style>
         path {
             fill: none;
-            stroke-opacity: 0.35;
+            stroke-opacity: 0.1;
         }
 
-        .highlighted path {
+        path.highlighted {
             stroke-opacity: 0.7;
         }
 
-        .highlighted circle {
+        circle.highlighted {
             outline-color: black;
-            outline-width: 2px;
+            outline-width: 2pt;
         }
 
         .pre-req path {
@@ -127,6 +127,7 @@
                 return colours(d.id.substring(0, 2))
             })
             .on("mouseover", mouseover)
+            .on("mouseout", mouseout)
         .append("title")
             .text(function (d) {
                 return d.id;
@@ -236,8 +237,42 @@
     }
 
     function mouseover(d) {
-        // TODO
-        // console.log(d);
+        const toHighlight = tailRec(MY_DATA, d.id, [], []);
+
+        toHighlight.highlightNodes.forEach(function (d) {
+            svg.selectAll("#" + d).classed("highlighted", true);
+        });
+
+        toHighlight.highlightLinks.forEach(function (d) {
+            svg.selectAll("#" + d).classed("highlighted", true);
+        })
+
+        // svg.selectAll("highlightedNodes")
+        //     .data(toHighlight.highlightNodes)
+        //     .enter()
+        //     .selectAll(function (d) {
+        //         return "#" + d;
+        //     })
+        //     .classed("highlighted", true);
+        //
+        // svg.selectAll("highlightedLinks")
+        //     .data(toHighlight.highlightLinks)
+        //     .enter()
+        //     .selectAll(function (d) {
+        //         return "#" + d;
+        //     })
+        //     .classed("highlighted", true);
+    }
+
+    function mouseout(d) {
+        svg.selectAll(".highlighted")
+            .classed("highlighted", false);
+
+        // circles.selectAll(".circle")
+        //     .classed("highlighted", false);
+        //
+        // cubicLinks.selectAll(".path")
+        //     .classed("highlighted", false);
     }
 
 </script>
