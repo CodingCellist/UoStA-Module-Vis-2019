@@ -13,7 +13,11 @@ W.I.P.
 - [x] Popelate database with CS requisites  
 - [x] Populate database with BL modules  
 - [x] Populate database with BL requisites  
-- [ ] Very basic server  
-- [ ] Initial network visualisation  
+- [x] Very basic server  
+- [x] Initial network visualisation  
+- [ ] Highlight paths on mouseover  
+- [ ] Change circles to rects  
+- [ ] Add labels (rects --> "textboxes")  
+- [ ] Modify the links to match edges of boxes?  
 - [ ] The rest of this TODO-list  
 

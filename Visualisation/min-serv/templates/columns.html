@@ -223,43 +223,6 @@
         }
     }
 
-    // "CLOSE BUT NO CIGAR"-ATTEMPT AT THE FUNCTION ABOVE
-    // let targeted = [];
-    // function test({nodes, links}, nodeID) {
-    //     console.log("NODE: " + nodeID.toUpperCase());
-    //     targeted.push(nodeID);
-    //     let targets = _.uniq(
-    //         links.filter(function (link) {
-    //             if (link.source[2] === "1") {
-    //                 return link.type.toLowerCase() !== "anti" && link.source === nodeID;
-    //             }
-    //             return link.source === nodeID;
-    //         })
-    //             .map(l => l.target)
-    //     );
-    //     console.log("targets");
-    //     console.log(targets);
-    //     if (targets.length > 0) {
-    //         for (i in targets) {
-    //             let nextTarget = targets[i];
-    //             if (!(_.includes(targeted, nextTarget))) test({nodes, links}, nextTarget);
-    //         }
-    //     }
-    // }
-
-    // PLAYING WITH THE IDEA OF CONSTRUCTING A HIERARCHY "FROM THE FRONT"
-    // function findChildren({nodes, links}, nodeID) {
-    //     return _.uniq(
-    //         links
-    //         .filter(function (l) {
-    //             return l.target === nodeID;
-    //         })
-    //         .map(function (l) {
-    //             return l.source;
-    //         })
-    //     )
-    // }
-
     function mouseover(d) {
         // TODO
         // console.log(d);
