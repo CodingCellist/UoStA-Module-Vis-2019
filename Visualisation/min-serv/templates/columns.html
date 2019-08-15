@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Column-oriented layout</title>
+
+    <style>
+        path {
+            fill: none;
+            stroke-opacity: 0.1;
+        }
+
+        path.highlighted {
+            stroke-opacity: 0.7;
+        }
+
+        circle.highlighted {
+            stroke: black;
+            outline-width: 2pt;
+        }
+
+        .pre-req path {
+            stroke: forestgreen;
+        }
+
+        .anti-req path {
+            stroke: crimson;
+        }
+
+        .co-req path {
+            stroke: cornflowerblue;
+        }
+    </style>
+</head>
+<body>
+<script>
+    // data put in by jinja2
+    const MY_DATA = {{ network|safe }};
+    console.log(MY_DATA);
+
+    ////////////////////
+    // PRE-PROCESSING //
+    ////////////////////
+
+    // nest the modules by their level, i.e. the 3rd char in their name
+    let nestedModules = d3.nest()
+        .key(function (d) {
+            return d.id[2];
+        })
+        .entries(MY_DATA.nodes);
+
+    console.log(nestedModules);
+
+    // nest the links by their type, i.e. "pre", "anti", and "co"
+    let nestedLinks = d3.nest()
+        .key(function (d) {
+            return d.type.toLowerCase();
+        })
+        .entries(MY_DATA.links);
+
+    console.log(nestedLinks);
+
+    ///////////
+    // SETUP //
+    ///////////
+
+    // attrs of svg
+    const width = 960;
+    const height = 960;
+
+    const xMargin = width / 10;
+    const yMargin = height / 10;
+
+    // D3 stuff
+    let svg = d3.select("body")
+                .append("div")
+                .attr("id", "fd-graph")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+    const nodeRadius = 5;
+
+    // equal x-spacing (may want to change this to d3.scaleBand when doing rects)
+    let xScale = d3.scalePoint(
+        _.map(nestedModules, 'key'),
+        [xMargin + nodeRadius, width - xMargin - nodeRadius]
+    );
+
+    // colour-coding the groups
+    let schoolCodes = _.uniqBy(MY_DATA.nodes, function (n) {
+        return n.id.substring(0, 2);
+    });
+    let colours = d3.scaleOrdinal(schoolCodes, d3.schemeCategory10);
+
+    ///////////////////
+    // NODE CREATION //
+    ///////////////////
+
+    let levelGroups = svg.selectAll("myGroups")
+        .data(nestedModules)
+        .enter()
+        .append("g")
+            .attr("transform", function (d) {
+                // translate wrt. the scale defined through d3
+                return "translate(" + xScale(d.key) + ", 0)";
+            });
+
+    let circles = levelGroups.selectAll("myCircles")
+        .data(function (d) {
+            return d.values;
+        })
+        .enter()
+        .append("circle")
+            .attr("id", function (d) {
+                return d.id;
+            })
+            .attr("cy", function (d, i) {
+                return nodeRadius + i * 2 * nodeRadius;
+                // bottom-alignment:
+                // return width - yMargin - (nodeRadius + i * 2 * nodeRadius);
+            })
+            .attr("r", nodeRadius)
+            .attr("fill", function (d) {
+                return colours(d.id.substring(0, 2))
+            })
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout)
+        .append("title")
+            .text(function (d) {
+                return d.id;
+            });
+
+    ///////////////////
+    // LINK CREATION //
+    ///////////////////
+
+    let linkGroups = svg.selectAll("linkGroups")
+        .data(nestedLinks)
+        .enter()
+        .append("g")
+            .attr("class", function (d) {
+                return d.key + "-req";
+            });
+
+    // cubic bezier links
+    let horizontalLinkGenerator = d3.linkHorizontal();
+    let cubicLinks = linkGroups.selectAll("myCubicLinks")
+        .data(function (d) {
+            return d.values;
+        })
+        .enter()
+        .append("path")
+            .attr("id", function (d) {
+                return d.source + "--" + d.target;
+            })
+            .attr("d", function (d) {
+                // find the coordinates, with translation
+                let x1 = xScale(parseInt(d.source[2])),
+                    y1 = parseFloat(d3.select("#" + d.source).attr("cy")),
+                    x2 = xScale(parseInt(d.target[2])),
+                    y2 = parseFloat(d3.select("#" + d.target).attr("cy"));
+
+                // store the coordinates in an object
+                let coords = {
+                    "source": [x1, y1],
+                    "target": [x2, y2]
+                };
+
+                if (x1 === x2) {
+                    // if the link is vertical do things manually
+                    let diff = xScale(2) - xScale(1);
+                    let cpX = x1 - diff / 2,
+                        cpY = y1 > y2
+                                ? y2 + (y1 - y2) / 2
+                                : y1 + (y2 - y1) / 2;
+                    return "M" + x1 + "," + y1
+                        + " Q" + cpX + "," + cpY
+                        + " " + x2 + "," + y2;
+                } else {
+                    return horizontalLinkGenerator(coords);
+                }
+            });
+
+    ////////////
+    // EVENTS //
+    ////////////
+
+    // helper function to find all paths leading to the given node
+    function tailRec({nodes, links}, nodeID, nodeTail, linkTail) {
+        console.log("NODE: " + nodeID);
+        // console.log(nodeTail);
+        nodeTail.push(nodeID);
+        // console.log(nodeTail);
+        let targets =
+            _.uniq(
+                links
+                    .filter(function (link) {
+                        if (link.source === nodeID && !(_.includes(nodeTail, link.target))) {
+                            // if it's a link we care about
+                            if (link.source[2] === "1" && link.type.toLowerCase() === "anti") {
+                                // if we're at 1000-level, only do anti-reqs on
+                                // the same level, i.e. don't go back up
+                                // linkTail.push(link);
+                                if (link.target[2] === "1") {
+                                    linkTail.push(link.source + "--" + link.target);
+                                    return true;
+                                }
+                                return false;
+                            }
+                            // return true if not at 1000-level, as we just need
+                            // to find the link
+                            // linkTail.push(link);
+                            linkTail.push(link.source + "--" + link.target);
+                            return true;
+                        }
+                        // else, not a link we care about (link.source !== nodeID)
+                        return false;
+                    })
+                    .map(function (link) {
+                        // retrieve the targets
+                        return link.target;
+                    })
+            );
+        // console.log("targets:");
+        // console.log(targets);
+        linkTail = _.uniq(linkTail);
+        if (targets.length > 0) {
+            for (i in targets) {
+                let nextTarget = targets[i];
+                tailRec({nodes, links}, nextTarget, nodeTail, linkTail);
+            }
+        }
+        return {"highlightNodes": nodeTail, "highlightLinks": linkTail};
+    }
+
+    function mouseover(d) {
+        const toHighlight = tailRec(MY_DATA, d.id, [], []);
+
+        toHighlight.highlightNodes.forEach(function (d) {
+            svg.selectAll("#" + d).classed("highlighted", true);
+        });
+
+        toHighlight.highlightLinks.forEach(function (d) {
+            svg.selectAll("#" + d).classed("highlighted", true);
+        })
+    }
+
+    function mouseout(d) {
+        svg.selectAll(".highlighted")
+            .classed("highlighted", false);
+    }
+
+</script>
+</body>
+</html>

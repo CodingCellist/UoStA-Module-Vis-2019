@@ -19,14 +19,16 @@ mariadb.init_app(app)
 def nodes_to_json(nodes):
     node_array = []
     for node in nodes:
-        node_array.append('{"id": "%s", "group": %s}' % (node[0], get_group(node[0])))
+        node_array.append(
+            '{"id": "%s", "group": %s}' % (node[0], get_group(node[0])))
     return str(node_array)
 
 
 def links_to_json(links):
     link_array = []
-    for src, tgt in links:
-        link_array.append('{"source": "%s", "target": "%s"}' % (src, tgt))
+    for src, tgt, type_ in links:
+        link_array.append(
+            '{"source": "%s", "target": "%s", "type":"%s"}' % (src, tgt, type_))
     return str(link_array)
 
 
@@ -44,11 +46,18 @@ def query_db():
     cursor.execute('SELECT `code` FROM `module`;')
     raw_nodes = cursor.fetchall()
     cursor.execute(
-        'SELECT source_module, TargetModule FROM complete_requisites;')
+        'SELECT source_module, TargetModule, `type` FROM complete_requisites;')
     raw_links = cursor.fetchall()
     nodes = str(nodes_to_json(raw_nodes)).replace("'", "")
     links = str(links_to_json(raw_links)).replace("'", "")
     return nodes, links
+
+
+def network_template(template_name: str):
+    nodes, links = query_db()
+    network = '{"nodes": %s, "links": %s}' % (nodes, links)
+    json_network = json.loads(network)
+    return render_template(template_name, network=json_network)
 
 
 @app.route('/data', methods=['GET'])
@@ -61,16 +70,20 @@ def data():
 
 @app.route('/fd-graph', methods=['GET'])
 def fd_graph():
-    nodes, links = query_db()
-    network = '{"nodes": %s, "links": %s}' % (nodes, links)
-    return render_template('fd-graph.html', network=json.loads(network))
+    # nodes, links = query_db()
+    # network = '{"nodes": %s, "links": %s}' % (nodes, links)
+    # return render_template('fd-graph.html', network=json.loads(network))
+    return network_template('fd-graph.html')
 
 
-@app.route('/force-directed', methods=['GET'])
-def force_directed():
-    nodes, links = query_db()
-    network = '{"nodes": %s, "links": %s}' % (nodes, links)
-    return render_template('force-directed.html', network=network)
+@app.route('/columns')
+def columns():
+    return network_template('columns.html')
+
+
+@app.route('/fd-colour')
+def fd_colour():
+    return network_template('fd-graph-colour.html')
 
 
 if __name__ == '__main__':
