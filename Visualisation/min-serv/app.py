@@ -60,48 +60,6 @@ def find_paths_to_node(node):
     return reachable_nodes, edges_involved
 
 
-# ATTEMPT AT DOING THINGS MANUALLY UNTIL I FOUND THE RIGHT ALGORITHMS
-# def find_paths_to_node(node):
-#     """
-#     Uses the directed graph to find all the paths leading to the given node
-#     :param node:
-#     :return: the involved nodes and edges in all the paths
-#     """
-#     involved_nodes, path_fragments = set(), set()
-#     neighbours = list(dg[node])
-#     old_in_len = len(involved_nodes)
-#     old_pf_len = len(path_fragments)
-#     # while neighbours is not empty
-#     while not len(neighbours) == 0:
-#         neighbour = neighbours.pop()
-#         neighbour_helper(neighbours, neighbour, involved_nodes, path_fragments)
-#         # if the sets stopped growing, remove all instances of the current node
-#         # from the list of nodes to check
-#         if old_in_len == len(involved_nodes) and old_pf_len == len(path_fragments):
-#             while neighbour in neighbours:
-#                 neighbours.remove(neighbour)
-#     return involved_nodes, path_fragments
-#
-#
-#     # for each neighbour:
-#     #  while we are adding things:
-#     #   add the edges from the source node to the current neighbour
-#     #   find the neighbours of the current neighbour
-#     #   repeat process with the new neighbours
-#
-#
-# def neighbour_helper(neighbours: list, neighbour_node, inv_nodes: set, path_frags: set):
-#     while True:
-#         old_in_len = len(inv_nodes)
-#         old_pf_len = len(path_frags)
-#         inv_nodes.add(neighbour_node)
-#         for attached in dg[neighbour_node]:
-#             path_frags.add(neighbour_node + '--' + attached)
-#             neighbours.append(attached)
-#         if old_in_len == len(inv_nodes) and old_pf_len == len(path_frags):
-#             break
-
-
 def nodes_to_json(nodes):
     node_array = []
     for node in nodes:
