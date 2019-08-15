@@ -36,9 +36,21 @@
 </head>
 <body>
 <script>
+    // Node object to associate the `returnNodes` function with
+    function Node(id, type) {
+        this.id = id;
+        this.type = type;
+    }
+
+    Node.prototype.returnNodes = returnNodes;
+
     // data put in by jinja2
     const MY_DATA = {{ network|safe }};
     console.log(MY_DATA);
+
+    MY_DATA.nodes = _.map(MY_DATA.nodes, function (node) {
+        return new Node(node)
+    });
 
     ////////////////////
     // PRE-PROCESSING //
@@ -184,60 +196,43 @@
                 }
             });
 
+    /////////////
+    // HELPERS //
+    /////////////
+
+    // helper function to find all paths leading to the given node
+    function returnNodes(list) {
+        if (list.includes(this)) {
+            return list;
+        } else {
+            list.push(this);
+            let connected_ids =
+                MY_DATA.links
+                    .filter(function (link) {
+                        return link.target === this.id;
+                    })
+                    .map(function (link) {
+                        return link.source;
+                    })
+            ;
+            let connected_nodes =
+                MY_DATA.nodes
+                    .filter(function (node) {
+                        return connected_ids.includes(node)
+                    })
+            ;
+            connected_nodes.forEach(function (connected) {
+                connected.returnNodes(list);
+            });
+        }
+    }
+
     ////////////
     // EVENTS //
     ////////////
 
-    // helper function to find all paths leading to the given node
-    function tailRec({nodes, links}, nodeID, nodeTail, linkTail) {
-        console.log("NODE: " + nodeID);
-        // console.log(nodeTail);
-        nodeTail.push(nodeID);
-        // console.log(nodeTail);
-        let targets =
-            _.uniq(
-                links
-                    .filter(function (link) {
-                        if (link.source === nodeID && !(_.includes(nodeTail, link.target))) {
-                            // if it's a link we care about
-                            if (link.source[2] === "1" && link.type.toLowerCase() === "anti") {
-                                // if we're at 1000-level, only do anti-reqs on
-                                // the same level, i.e. don't go back up
-                                // linkTail.push(link);
-                                if (link.target[2] === "1") {
-                                    linkTail.push(link.source + "--" + link.target);
-                                    return true;
-                                }
-                                return false;
-                            }
-                            // return true if not at 1000-level, as we just need
-                            // to find the link
-                            // linkTail.push(link);
-                            linkTail.push(link.source + "--" + link.target);
-                            return true;
-                        }
-                        // else, not a link we care about (link.source !== nodeID)
-                        return false;
-                    })
-                    .map(function (link) {
-                        // retrieve the targets
-                        return link.target;
-                    })
-            );
-        // console.log("targets:");
-        // console.log(targets);
-        linkTail = _.uniq(linkTail);
-        if (targets.length > 0) {
-            for (i in targets) {
-                let nextTarget = targets[i];
-                tailRec({nodes, links}, nextTarget, nodeTail, linkTail);
-            }
-        }
-        return {"highlightNodes": nodeTail, "highlightLinks": linkTail};
-    }
-
     function mouseover(d) {
-        const toHighlight = tailRec(MY_DATA, d.id, [], []);
+        const toHighlight = [];
 
         toHighlight.highlightNodes.forEach(function (d) {
             svg.selectAll("#" + d).classed("highlighted", true);
