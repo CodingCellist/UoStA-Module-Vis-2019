@@ -37,9 +37,9 @@
 <body>
 <script>
     // Node object to associate the `returnNodes` function with
-    function Node(id, type) {
+    function Node(id, group) {
         this.id = id;
-        this.type = type;
+        this.group = group;
     }
 
     Node.prototype.returnNodes = returnNodes;
@@ -48,13 +48,25 @@
     const MY_DATA = {{ network|safe }};
     console.log(MY_DATA);
 
-    MY_DATA.nodes = _.map(MY_DATA.nodes, function (node) {
-        return new Node(node)
-    });
-
     ////////////////////
     // PRE-PROCESSING //
     ////////////////////
+
+    // turn all the nodes, which are currently `Object`, into `Node` objects
+    MY_DATA.nodes = _.map(MY_DATA.nodes, function ({id, group}) {
+        return new Node(id, group);
+    });
+
+    // calculate all the connected nodes and paths
+    MY_DATA.nodes.forEach(function (node) {
+        let nodeList = [],
+            linkList = [];
+        node.returnNodes(nodeList, linkList);
+        node.ancestorOf = nodeList;
+        node.ancestorLinks = linkList;
+    });
+
+    console.log(MY_DATA.nodes);
 
     // nest the modules by their level, i.e. the 3rd char in their name
     let nestedModules = d3.nest()
@@ -201,28 +213,46 @@
     /////////////
 
     // helper function to find all paths leading to the given node
-    function returnNodes(list) {
-        if (list.includes(this)) {
-            return list;
-        } else {
-            list.push(this);
-            let connected_ids =
+    function returnNodes(nodeList, linkList) {
+        // if (nodeList.includes(this)) {
+        //     // if we've already "traversed" this node, return
+        //     return {"nodeList": nodeList, "linkList": linkList};
+        // } else {
+        if (!nodeList.includes(this)) {
+            // add the current node to the nodeList
+            nodeList.push(this);
+            const nodeID = this.id;
+            // find all links leading to this node
+            let connectedLinks =
                 MY_DATA.links
                     .filter(function (link) {
-                        return link.target === this.id;
-                    })
+                        // return link.target === nodeID;
+                        return link.source === nodeID;
+                    });
+            // add the connected links not already in the linkList to it
+            connectedLinks.forEach(function (link) {
+                if (!linkList.includes(link)) {
+                    linkList.push(link);
+                }
+            });
+            // find the ids of the origin-nodes of the connected links
+            let connectedIds =
+                connectedLinks
                     .map(function (link) {
-                        return link.source;
+                        // return link.source;
+                        return link.target;
                     })
             ;
-            let connected_nodes =
+            // find the `Node` objects the connectedIds refer to
+            let connectedNodes =
                 MY_DATA.nodes
                     .filter(function (node) {
-                        return connected_ids.includes(node)
+                        return connectedIds.includes(node.id)
                     })
             ;
-            connected_nodes.forEach(function (connected) {
-                connected.returnNodes(list);
+            // call this function for each of those nodes, repeating the process
+            connectedNodes.forEach(function (connected) {
+                connected.returnNodes(nodeList, linkList);
             });
         }
     }
@@ -232,15 +262,16 @@
     ////////////
 
     function mouseover(d) {
-        const toHighlight = [];
-
-        toHighlight.highlightNodes.forEach(function (d) {
-            svg.selectAll("#" + d).classed("highlighted", true);
-        });
-
-        toHighlight.highlightLinks.forEach(function (d) {
-            svg.selectAll("#" + d).classed("highlighted", true);
-        })
+        // FixMe: change to the new system with ancestors
+        // const toHighlight = [];
+        //
+        // toHighlight.highlightNodes.forEach(function (d) {
+        //     svg.selectAll("#" + d).classed("highlighted", true);
+        // });
+        //
+        // toHighlight.highlightLinks.forEach(function (d) {
+        //     svg.selectAll("#" + d).classed("highlighted", true);
+        // })
     }
 
     function mouseout(d) {
