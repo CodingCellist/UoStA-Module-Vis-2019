@@ -16,8 +16,8 @@ W.I.P.
 - [x] Very basic server  
 - [x] Initial network visualisation  
 - [x] Highlight paths on mouseover  
-- [ ] Fix highlighting (currently only does 2 levels, not all)  
-- [ ] Make path-calculation server-side  
+- [x] Fix highlighting (currently only does 2 levels, not all)  
+- [x] Make path-calculation server-side  
 - [ ] Change circles to rects  
 - [ ] Add labels (rects --> "textboxes")  
 - [ ] Modify the links to match edges of boxes?  
