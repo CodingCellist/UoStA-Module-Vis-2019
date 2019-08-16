@@ -141,6 +141,19 @@
             .attr("id", function (d) {
                 return d.id;
             })
+            .attr("class", ancestorClasses)
+            // .attr("class", function (d) {
+            //     // add a class for each node this node is an ancestor of
+            //     const prefix = "ancestor-of-";
+            //     let classes = "";
+            //     let ancestorClasses = _.map(d.ancestorOf, function (ancestor) {
+            //         return prefix + ancestor.id + " ";
+            //     });
+            //     ancestorClasses.forEach(function (ancestorClass) {
+            //         classes = classes + ancestorClass;
+            //     });
+            //     return classes;
+            // })
             .attr("cy", function (d, i) {
                 return nodeRadius + i * 2 * nodeRadius;
                 // bottom-alignment:
@@ -180,6 +193,13 @@
             .attr("id", function (d) {
                 return d.source + "--" + d.target;
             })
+            .attr("class", function (d) {
+                // this link dictates ancestors for its source node
+                const srcNode = MY_DATA.nodes.filter(function (node) {
+                    return node.id === d.source;
+                })[0];
+                return ancestorClasses(srcNode);
+            })
             .attr("d", function (d) {
                 // find the coordinates, with translation
                 let x1 = xScale(parseInt(d.source[2])),
@@ -212,7 +232,7 @@
     // HELPERS //
     /////////////
 
-    // helper function to find all paths leading to the given node
+    // helper function to find all children of the given node
     function returnNodes(nodeList, linkList) {
         // if (nodeList.includes(this)) {
         //     // if we've already "traversed" this node, return
@@ -226,8 +246,8 @@
             let connectedLinks =
                 MY_DATA.links
                     .filter(function (link) {
-                        // return link.target === nodeID;
-                        return link.source === nodeID;
+                        return link.target === nodeID;  // finds the children
+                        // return link.source === nodeID;  // finds the parents
                     });
             // add the connected links not already in the linkList to it
             connectedLinks.forEach(function (link) {
@@ -239,8 +259,8 @@
             let connectedIds =
                 connectedLinks
                     .map(function (link) {
-                        // return link.source;
-                        return link.target;
+                        return link.source;     // finds the children
+                        // return link.target;  // finds the parents
                     })
             ;
             // find the `Node` objects the connectedIds refer to
@@ -257,24 +277,30 @@
         }
     }
 
+    // helper function returning a string of `ancestor-of-` classes for a given
+    // node
+    function ancestorClasses(node) {
+        const prefix = "ancestor-of-";
+        let classes = "";
+        let ancestorClasses = _.map(node.ancestorOf, function (ancestor) {
+            return prefix + ancestor.id + " ";
+        });
+        ancestorClasses.forEach(function (ancestorClass) {
+            classes = classes + ancestorClass;
+        });
+        return classes;
+    }
+
     ////////////
     // EVENTS //
     ////////////
 
     function mouseover(d) {
-        // FixMe: change to the new system with ancestors
-        // const toHighlight = [];
-        //
-        // toHighlight.highlightNodes.forEach(function (d) {
-        //     svg.selectAll("#" + d).classed("highlighted", true);
-        // });
-        //
-        // toHighlight.highlightLinks.forEach(function (d) {
-        //     svg.selectAll("#" + d).classed("highlighted", true);
-        // })
+        svg.selectAll(".ancestor-of-" + d.id)
+            .classed("highlighted", true)
     }
 
-    function mouseout(d) {
+    function mouseout() {
         svg.selectAll(".highlighted")
             .classed("highlighted", false);
     }
