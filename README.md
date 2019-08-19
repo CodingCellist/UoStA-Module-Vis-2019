@@ -21,6 +21,8 @@ W.I.P.
 - [x] Change circles to rects  
 - [x] Add labels (rects --> "textboxes")  
 - [x] Modify the links to match edges of boxes  
-- [ ] Dynamic font-size?  
+- [ ] ~~Dynamic font-size?~~  
+- [x] Change opacity based on highlighting  
+- [x] Change path width based on highlighting  
 - [ ] The rest of this TODO-list  
 
