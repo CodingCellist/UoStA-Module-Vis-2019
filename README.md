@@ -24,5 +24,10 @@ W.I.P.
 - [ ] ~~Dynamic font-size?~~  
 - [x] Change opacity based on highlighting  
 - [x] Change path width based on highlighting  
+- [ ] Filters  
+  - [ ] School/Subject  
+  - [ ] By semester  
+  - [ ] By credit worth  
+- [ ] Webpage. Try Bootstrap  
 - [ ] The rest of this TODO-list  
 
