@@ -266,11 +266,9 @@
                     // y2 = parseFloat(d3.select("#" + d.target).attr("cy"));   // circle
                     y2 = parseFloat(d3.select("#" + d.target).attr("y"));       // rect
 
-                // store the coordinates in an object
-                let coords = {
-                    "source": [x1, y1],
-                    "target": [x2, y2]
-                };
+                // FOR RECTS: center the y-point
+                y1 += yScale.bandwidth() / 2;
+                y2 += yScale.bandwidth() / 2;
 
                 if (x1 === x2) {
                     // if the link is vertical do things manually
@@ -284,6 +282,18 @@
                         + " Q" + cpX + "," + cpY
                         + " " + x2 + "," + y2;
                 } else {
+                    // FOR RECTS: change x-coordinate wrt. the width of the rect
+                    if (x1 < x2) {
+                        x1 += xScale.bandwidth();
+                    } else {
+                        x2 += xScale.bandwidth();
+                    }
+
+                    // store the coordinates in an object for D3
+                    let coords = {
+                        "source": [x1, y1],
+                        "target": [x2, y2]
+                    };
                     return horizontalLinkGenerator(coords);
                 }
             });

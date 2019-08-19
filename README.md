@@ -20,7 +20,7 @@ W.I.P.
 - [x] Make path-calculation server-side  
 - [x] Change circles to rects  
 - [x] Add labels (rects --> "textboxes")  
-- [ ] Modify the links to match edges of boxes  
+- [x] Modify the links to match edges of boxes  
 - [ ] Dynamic font-size?  
 - [ ] The rest of this TODO-list  
 
