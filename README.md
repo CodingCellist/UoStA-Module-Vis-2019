@@ -18,8 +18,9 @@ W.I.P.
 - [x] Highlight paths on mouseover  
 - [x] Fix highlighting (currently only does 2 levels, not all)  
 - [x] Make path-calculation server-side  
-- [ ] Change circles to rects  
-- [ ] Add labels (rects --> "textboxes")  
-- [ ] Modify the links to match edges of boxes?  
+- [x] Change circles to rects  
+- [x] Add labels (rects --> "textboxes")  
+- [ ] Modify the links to match edges of boxes  
+- [ ] Dynamic font-size?  
 - [ ] The rest of this TODO-list  
 
