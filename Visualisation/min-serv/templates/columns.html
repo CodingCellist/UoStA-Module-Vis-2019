@@ -16,7 +16,8 @@
             stroke-opacity: 0.7;
         }
 
-        circle.highlighted {
+        /*circle.highlighted {*/
+        rect.highlighted {
             stroke: black;
             outline-width: 2pt;
         }
@@ -94,8 +95,8 @@
     const width = 960;
     const height = 960;
 
-    const xMargin = width / 10;
-    const yMargin = height / 10;
+    const xMargin = width / 15;
+    const yMargin = height / 100;
 
     // D3 stuff
     let svg = d3.select("body")
@@ -108,10 +109,20 @@
     const nodeRadius = 5;
 
     // equal x-spacing (may want to change this to d3.scaleBand when doing rects)
-    let xScale = d3.scalePoint(
+    // let xScale = d3.scalePoint(
+    //     _.map(nestedModules, 'key'),
+    //     [xMargin + nodeRadius, width - xMargin - nodeRadius]
+    // );
+    let xScale = d3.scaleBand(
         _.map(nestedModules, 'key'),
-        [xMargin + nodeRadius, width - xMargin - nodeRadius]
-    );
+        [xMargin, width - xMargin]
+    )
+        .paddingInner(0.5);
+    let yScale = d3.scaleBand(
+        _.range(_.max(_.map(_.map(nestedModules, 'values'), arr => arr.length))),
+        [yMargin, height - yMargin]
+    )
+        .paddingInner(0.15);
 
     // colour-coding the groups
     let schoolCodes = _.uniqBy(MY_DATA.nodes, function (n) {
@@ -132,34 +143,61 @@
                 return "translate(" + xScale(d.key) + ", 0)";
             });
 
-    let circles = levelGroups.selectAll("myCircles")
+    // DRAWING CIRCLES AS NODES
+    // let circles = levelGroups.selectAll("myCircles")
+    //     .data(function (d) {
+    //         return d.values;
+    //     })
+    //     .enter()
+    //     .append("circle")
+    //         .attr("id", function (d) {
+    //             return d.id;
+    //         })
+    //         .attr("class", ancestorClasses)
+    //         // .attr("class", function (d) {
+    //         //     // add a class for each node this node is an ancestor of
+    //         //     const prefix = "ancestor-of-";
+    //         //     let classes = "";
+    //         //     let ancestorClasses = _.map(d.ancestorOf, function (ancestor) {
+    //         //         return prefix + ancestor.id + " ";
+    //         //     });
+    //         //     ancestorClasses.forEach(function (ancestorClass) {
+    //         //         classes = classes + ancestorClass;
+    //         //     });
+    //         //     return classes;
+    //         // })
+    //         .attr("cy", function (d, i) {
+    //             return nodeRadius + i * 2 * nodeRadius;
+    //             // bottom-alignment:
+    //             // return width - yMargin - (nodeRadius + i * 2 * nodeRadius);
+    //         })
+    //         .attr("r", nodeRadius)
+    //         .attr("fill", function (d) {
+    //             return colours(d.id.substring(0, 2))
+    //         })
+    //         .on("mouseover", mouseover)
+    //         .on("mouseout", mouseout)
+    //     .append("title")
+    //         .text(function (d) {
+    //             return d.id;
+    //         });
+
+    // DRAWING RECTS AS NODES
+    let rects = levelGroups.selectAll("myRects")
         .data(function (d) {
             return d.values;
         })
         .enter()
-        .append("circle")
+        .append("rect")
             .attr("id", function (d) {
                 return d.id;
             })
             .attr("class", ancestorClasses)
-            // .attr("class", function (d) {
-            //     // add a class for each node this node is an ancestor of
-            //     const prefix = "ancestor-of-";
-            //     let classes = "";
-            //     let ancestorClasses = _.map(d.ancestorOf, function (ancestor) {
-            //         return prefix + ancestor.id + " ";
-            //     });
-            //     ancestorClasses.forEach(function (ancestorClass) {
-            //         classes = classes + ancestorClass;
-            //     });
-            //     return classes;
-            // })
-            .attr("cy", function (d, i) {
-                return nodeRadius + i * 2 * nodeRadius;
-                // bottom-alignment:
-                // return width - yMargin - (nodeRadius + i * 2 * nodeRadius);
+            .attr("y", function (d, i) {
+                return yScale(i);
             })
-            .attr("r", nodeRadius)
+            .attr("width", xScale.bandwidth())
+            .attr("height", yScale.bandwidth())
             .attr("fill", function (d) {
                 return colours(d.id.substring(0, 2))
             })
@@ -203,9 +241,11 @@
             .attr("d", function (d) {
                 // find the coordinates, with translation
                 let x1 = xScale(parseInt(d.source[2])),
-                    y1 = parseFloat(d3.select("#" + d.source).attr("cy")),
+                    // y1 = parseFloat(d3.select("#" + d.source).attr("cy")),   // circle
+                    y1 = parseFloat(d3.select("#" + d.source).attr("y")),       // rect
                     x2 = xScale(parseInt(d.target[2])),
-                    y2 = parseFloat(d3.select("#" + d.target).attr("cy"));
+                    // y2 = parseFloat(d3.select("#" + d.target).attr("cy"));   // circle
+                    y2 = parseFloat(d3.select("#" + d.target).attr("y"));       // rect
 
                 // store the coordinates in an object
                 let coords = {
@@ -216,6 +256,7 @@
                 if (x1 === x2) {
                     // if the link is vertical do things manually
                     let diff = xScale(2) - xScale(1);
+                    // calculate the control point
                     let cpX = x1 - diff / 2,
                         cpY = y1 > y2
                                 ? y2 + (y1 - y2) / 2
