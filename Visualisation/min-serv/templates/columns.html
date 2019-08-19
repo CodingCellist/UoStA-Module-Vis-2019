@@ -93,7 +93,7 @@
 
     // attrs of svg
     const width = 960;
-    const height = 960;
+    const height = 2000;
 
     const xMargin = width / 15;
     const yMargin = height / 100;
@@ -203,6 +203,21 @@
             })
             .on("mouseover", mouseover)
             .on("mouseout", mouseout)
+        ;
+    levelGroups.selectAll("myText")
+        .data(function (d) {
+            return d.values;
+        })
+        .enter()
+        .append("text")
+            .attr("y", function (d, i) {
+                let bdw = yScale.bandwidth();
+                return yScale(i) + bdw - yScale.paddingInner() * bdw;
+            })
+            .text(function (d) {
+                return d.id;
+            });
+    rects
         .append("title")
             .text(function (d) {
                 return d.id;
