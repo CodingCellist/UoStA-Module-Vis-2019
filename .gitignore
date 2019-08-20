@@ -13,3 +13,5 @@ venv/
 # MS Word documents
 *.doc*
 
+# Old files
+old/
