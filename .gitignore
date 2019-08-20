@@ -7,11 +7,16 @@
 # "Compiled" diagrams
 diagrams/
 
-# Python virtual environments
+# Screenshots
+*.png
+
+# Python virtual environments and cache
 venv/
+__pycache__/
 
 # MS Word documents
 *.doc*
 
 # Old files
 old/
+
