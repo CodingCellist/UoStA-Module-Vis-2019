@@ -115,6 +115,11 @@ def network_template(template_name: str):
     return render_template(template_name, network=json_network)
 
 
+@app.route('/', methods=['GET'])
+def index():
+    return render_template("index.html")
+
+
 @app.route('/data', methods=['GET'])
 def data():
     nodes, links = query_db()
