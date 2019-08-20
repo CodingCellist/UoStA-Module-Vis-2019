@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>F-D with colours</title>
+
+    <style>
+        /*.links line {*/
+        /*    stroke: #999999;*/
+        /*    stroke-opacity: 0.7;*/
+        /*}*/
+
+        .nodes circle {
+            stroke: #ffffff;
+            stroke-width: 1.5px;
+        }
+
+        .prereq line {
+            stroke: chartreuse;
+            stroke-opacity: 0.7;
+        }
+
+        .antireq line {
+            stroke: crimson;
+            stroke-opacity: 0.7;
+        }
+
+        .coreq line {
+            stroke: cornflowerblue;
+            stroke-opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+<script>
+    // data receival and processing
+    const my_data = {{ network|safe }};
+    console.log(my_data);
+    const pre_links = _.filter(my_data.links, l => l.type === "Pre");
+    const anti_links = _.filter(my_data.links, l => l.type === "Anti");
+    const co_links = _.filter(my_data.links, l => l.type === "Co");
+
+
+    // attrs of svg
+    const width = 960;
+    const height = 700;
+    const nodeRadius = 5;
+
+    // D3 stuff
+    let svg = d3.select("body")
+                .append("div")
+                .attr("id", "fd-graph")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+    let color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    let forceSim = d3.forceSimulation()
+                        .force("link", d3.forceLink().id(d => d.id))
+                        .force("charge", d3.forceManyBody())
+                        .force("center", d3.forceCenter(width / 2, height / 2));
+
+    // create the links
+    // let link = svg.append("g")
+    //                 .attr("class", "links")
+    //                 .selectAll("line")
+    //                 .data(MY_DATA.links)
+    //                 .enter()
+    //                 .append("line");
+
+    let preLinks = svg.append("g")
+                        .attr("class", "links prereq")
+                        .selectAll("line")
+                        .data(pre_links)
+                        .enter()
+                        .append("line");
+
+    let antiLinks = svg.append("g")
+        .attr("class", "links antireq")
+        .selectAll("line")
+        .data(anti_links)
+        .enter()
+        .append("line");
+
+    let coLinks = svg.append("g")
+        .attr("class", "links coreq")
+        .selectAll("line")
+        .data(co_links)
+        .enter()
+        .append("line");
+
+    // create the nodes based on the "nodes" array in `MY_DATA`
+    let node = svg.append("g")
+                    .attr("class", "nodes")
+        .selectAll("circle")
+        .data(my_data.nodes)
+        .enter()
+        .append("circle")
+        .attr("r", nodeRadius)
+        .attr("fill", d => color(d.group))
+        .call(
+            d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended)
+        );
+
+    // label the nodes
+    node
+        .append("title")
+        .text(d => d.id);
+
+    // associate the nodes from `MY_DATA` with the force simulation
+    forceSim
+        .nodes(my_data.nodes)
+        .on("tick", ticked);
+
+    // associate the links from `MY_DATA` with the force simulation
+    forceSim
+        .force("link")
+        .links(my_data.links);
+
+    // reduce the strength of the manyBody force
+    forceSim
+        .force("charge")
+        .strength(() => -10);
+
+    // define what happens on each tick
+    function ticked() {
+        // link
+        //     .attr("x1", d => d.source.x)
+        //     .attr("y1", d => d.source.y)
+        //     .attr("x2", d => d.target.x)
+        //     .attr("y2", d => d.target.y);
+        preLinks
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+        antiLinks
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+        coLinks
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+        node
+            .attr("cx", d => Math.max(nodeRadius, Math.min(width - nodeRadius, d.x)))
+            .attr("cy", d => Math.max(nodeRadius, Math.min(height - nodeRadius, d.y)));
+    }
+
+    // define drag events
+    function dragstarted(d) {
+        if (!d3.event.active) forceSim.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    function dragended(d) {
+        if (!d3.event.active) forceSim.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+
+</script>
+</body>
+</html>

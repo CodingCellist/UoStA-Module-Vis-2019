@@ -10,6 +10,8 @@ diagrams/
 # Python virtual environments
 venv/
 
+# MS Word documents
+*.doc*
+
 # Old files
 old/
-
