@@ -1,0 +1,22 @@
+--  Drop table
+
+--  DROP TABLE teh6_2019_summer_project.requisite;
+
+CREATE TABLE teh6_2019_summer_project.requisite (
+	source_module varchar(6) NOT NULL,
+	target_module varchar(6) NOT NULL,
+	`type` varchar(4) NOT NULL,
+	academic_year varchar(9) NOT NULL,
+	group_id INT UNSIGNED NOT NULL,
+	`level` varchar(4) NOT NULL,
+	CONSTRAINT requisite_PK PRIMARY KEY (source_module,target_module,academic_year,group_id),
+	CONSTRAINT requisite_source_module_FK FOREIGN KEY (source_module) REFERENCES teh6_2019_summer_project.module(code) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT requisite_target_module_FK FOREIGN KEY (target_module) REFERENCES teh6_2019_summer_project.module(code) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT requisite_academic_year_FK FOREIGN KEY (academic_year) REFERENCES teh6_2019_summer_project.academic_year(title) ON DELETE RESTRICT ON UPDATE RESTRICT,
+	CONSTRAINT requisite_modules_different CHECK (NOT (source_module <=> target_module)),
+	CONSTRAINT requisite_type_pre_co_anti CHECK (`type` IN ('Pre', 'Co', 'Anti')),
+	CONSTRAINT requisite_academic_level CHECK (`level` IN ('UG', 'PGT', 'PGR'))
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_general_ci;
