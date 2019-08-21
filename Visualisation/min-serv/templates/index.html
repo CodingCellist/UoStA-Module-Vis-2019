@@ -4,40 +4,111 @@
     <meta charset="UTF-8">
     <title>UoStA Module Visualisation</title>
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Bootstrap-required JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="../static/css/sidebar.css">
 </head>
 <body>
-    <div class="row">
-        <!-- sidebar -->
-        <div class="col" id="sidebar">
-            <ul class="list-group">
-                <li>
-                    <div class="form-group">
-                        <label for="schools">School:</label>
-                        <input type="text" class="form-control" id="schools">
+    <div class="wrapper">
+
+        <!-- SIDEBAR -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Module Visualisation</h3>
+            </div>
+
+            <ul class="list-group components">
+                <p>Filters:</p>
+                <li class="list-group-item">
+                    <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>
+                    <ul class="collapse list-unstyled" id="schoolFilters">
+                        <li>
+                            <input type="text" class="form-control" id="schoolSearch" placeholder="School">
+                        </li>
+                        <li class="alert alert-secondary">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>
+                            Biology
+                        </li>
+                        <li class="alert alert-secondary">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>
+                            Computer Science
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item">
+                    <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>
+                    <div class="collapse" id="semesterFilters">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="">Whole year
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="">Semester 1
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="">Semester 2
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="">Summer
+                            </label>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="semesters">Semester:</label>
-                        <input type="text" class="form-control" id="semesters">
-                    </div>
-                    <div class="form-group">
-                        <label for="credit-worth">Credit worth:</label>
-                        <input type="text" class="form-control" id="credit-worth">
+                </li>
+                <li class="list-group-item">
+                    <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>
+                    <div class="collapse" id="creditWorthFilters">
+                        <input type="number" placeholder="No. credits">
                     </div>
                 </li>
             </ul>
-        </div>
-        <!-- content -->
-        <div class="col" id="content">
-            <nav class="navbar navbar-expand-sm bg-light">
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link">Visualisation</a></li>
-                    <li class="page-item"><a class="page-link">My modules</a></li>
-                    <li class="page-item"><a class="page-link">Admin</a></li>
-                </ul>
+        </nav>
+
+        <!-- CONTENT -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" class="btn btn-info" id="sidebarCollapse">
+                        <i class="fas fa-align-left"></i>
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <ul class="nav nav-pills justify-content-end">
+                        <!-- TODO: wire up the hrefs -->
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Admin</a>
+                        </li>
+                    </ul>
+                </div>
             </nav>
         </div>
+
     </div>
+
+    <!-- TODO: move this to separate file? -->
+    <script lang="javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar, #content').toggleClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+        });
+    </script>
 </body>
 </html>

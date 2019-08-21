@@ -24,10 +24,12 @@ W.I.P.
 - [ ] ~~Dynamic font-size?~~  
 - [x] Change opacity based on highlighting  
 - [x] Change path width based on highlighting  
-- [ ] Filters  
-  - [ ] School/Subject  
-  - [ ] By semester  
-  - [ ] By credit worth  
+- [x] Filters  
+  - [x] School/Subject  
+  - [x] By semester  
+  - [x] By credit worth  
+- [ ] Connect the website up to the data  
+- [ ] Connect the filters up to the data  
 - [ ] Webpage. Try Bootstrap  
 - [ ] The rest of this TODO-list  
 
