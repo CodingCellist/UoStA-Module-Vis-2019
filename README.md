@@ -28,8 +28,8 @@ W.I.P.
   - [x] School/Subject  
   - [x] By semester  
   - [x] By credit worth  
+- [x] Webpage. Try Bootstrap  
 - [ ] Connect the website up to the data  
 - [ ] Connect the filters up to the data  
-- [ ] Webpage. Try Bootstrap  
 - [ ] The rest of this TODO-list  
 

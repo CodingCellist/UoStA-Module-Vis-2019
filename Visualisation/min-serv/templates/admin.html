@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DB Admin</title>
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Bootstrap-required JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!-- Sidebar CSS -->
+    <link rel="stylesheet" href="../static/css/sidebar.css">
+</head>
+<body>
+    <div class="wrapper">
+
+        <!-- SIDEBAR -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>DB Administration</h3>
+            </div>
+
+            <ul class="list-group components">
+                <li class="list-group-item">
+                    <button type="button" class="btn btn-light">Create module</button>
+                </li>
+                <li class="list-group-item">
+                    <form>
+                        <label for="selectExistingModule">Existing modules:</label>
+                        <select name="existingModule" class="custom-select" id="selectExistingModule">
+
+                        </select>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- CONTENT -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" class="btn btn-info" id="sidebarCollapse">
+                        <i class="fas fa-align-left"></i>
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <ul class="nav nav-pills justify-content-end">
+                        <!-- TODO: wire up the hrefs -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Admin</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- Toggle the `active` class, thereby collapsing the sidebar -->
+    <script lang="javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar, #content').toggleClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+        });
+    </script>
+</body>
+</html>

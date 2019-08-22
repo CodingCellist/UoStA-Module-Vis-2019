@@ -45,25 +45,21 @@
                 <li class="list-group-item">
                     <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>
                     <div class="collapse" id="semesterFilters">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" value="">Whole year
-                            </label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="wholeYearSwitch">
+                            <label class="custom-control-label" for="wholeYearSwitch">Whole year</label>
                         </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" value="">Semester 1
-                            </label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="sem1Switch">
+                            <label class="custom-control-label" for="sem1Switch">Semester 1</label>
                         </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" value="">Semester 2
-                            </label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="sem2Switch">
+                            <label class="custom-control-label" for="sem2Switch">Semester 2</label>
                         </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" value="">Summer
-                            </label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="summerSwitch">
+                            <label class="custom-control-label" for="summerSwitch">Summer</label>
                         </div>
                     </div>
                 </li>
@@ -91,7 +87,7 @@
                             <a class="nav-link active" href="#">Overview</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Admin</a>
+                            <a class="nav-link" href="admin.html">Admin</a>
                         </li>
                     </ul>
                 </div>
@@ -100,7 +96,7 @@
 
     </div>
 
-    <!-- TODO: move this to separate file? -->
+    <!-- Toggle the `active` class, thereby collapsing the sidebar -->
     <script lang="javascript">
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
