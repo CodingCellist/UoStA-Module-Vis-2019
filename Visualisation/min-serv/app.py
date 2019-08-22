@@ -116,8 +116,14 @@ def network_template(template_name: str):
 
 
 @app.route('/', methods=['GET'])
+@app.route('/index.html', methods=['GET'])
 def index():
-    return render_template("index.html")
+    return network_template("index.html")
+
+
+@app.route('/admin.html', methods=['GET'])
+def db_admin():
+    return render_template("admin.html")
 
 
 @app.route('/data', methods=['GET'])

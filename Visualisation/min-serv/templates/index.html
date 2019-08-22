@@ -92,12 +92,15 @@
                     </ul>
                 </div>
             </nav>
+
+            <div class="col" id="svgContainer">
+            </div>
         </div>
 
     </div>
 
     <!-- Toggle the `active` class, thereby collapsing the sidebar -->
-    <script lang="javascript">
+    <script content="text/javascript">
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar, #content').toggleClass('active');
@@ -106,5 +109,17 @@
             });
         });
     </script>
+
+    <!-- VISUALISATION -->
+
+    <!-- Lodash -->
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js" integrity="sha256-VeNaFBVDhoX3H+gJ37DpT/nTuZTdjYro9yBruHjVmoQ=" crossorigin="anonymous"></script>
+    <!-- D3 stuff -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link rel="stylesheet" href="../static/css/visualisation.css">
+    <script>
+        const MY_DATA = {{ network|safe }};
+    </script>
+    <script src="../static/js/column-vis.js"></script>
 </body>
 </html>

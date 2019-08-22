@@ -29,7 +29,15 @@ W.I.P.
   - [x] By semester  
   - [x] By credit worth  
 - [x] Webpage. Try Bootstrap  
-- [ ] Connect the website up to the data  
+- [x] Connect the website up to the data  
 - [ ] Connect the filters up to the data  
+- [ ] Modify the SVG-container based on data?...  
+- [ ] ... or give it "infinite" height in some way?  
+- [ ] Some sort of "module shopping cart"  
+  - [ ] (More interactivity)  
+- [ ] Forms for the database management stuff  
+- [ ] Wire up the database management stuff to the server  
+- [ ] Scrape the degree programmes (oh god...)  
+- [ ] Scrape more modules (OH GOD!...)  
 - [ ] The rest of this TODO-list  
 
