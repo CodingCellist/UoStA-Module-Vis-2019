@@ -21,6 +21,9 @@ mariadb.init_app(app)
 # uses NetworkX for now, if we ever experience slowdown, look at graph-tool
 dg = nx.DiGraph()
 
+# school name to id
+school_dict = {}
+
 
 def add_nodes_to_graph(nodes):
     # might want to make this cleverer, but for now, rebuild the graph each time
@@ -38,7 +41,7 @@ def add_links_to_graph(links):
 
 
 def find_paths_to_node(node):
-    """
+    """convert
     Use the directed graph to find all the modules reachable via the requisites
     from the given node, at least staying at the same level or going down one,
     as well as all the edges involved in any of these traversals.
@@ -92,13 +95,23 @@ def get_group(module_code):
 
 
 def query_db():
-    # fetch the data
     cursor = db_conn.cursor()
+    # fetch the modules
     cursor.execute('SELECT `code` FROM `module`;')
     raw_nodes = cursor.fetchall()
+    # fetch the requisites
     cursor.execute(
         'SELECT source_module, TargetModule, `type` FROM complete_requisites;')
     raw_links = cursor.fetchall()
+    # fetch the schools if we haven't already
+    global school_dict
+    if len(school_dict) == 0:
+        cursor.execute(
+            'SELECT * FROM school;'
+        )
+        id_school_tuples = cursor.fetchall()
+        school_id_tuples = [(name, int_id) for (int_id, name) in id_school_tuples]
+        school_dict = dict(school_id_tuples)
     # update the di-graph
     add_nodes_to_graph(raw_nodes)
     add_links_to_graph(raw_links)

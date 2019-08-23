@@ -24,52 +24,103 @@
                 <h3>Module Visualisation</h3>
             </div>
 
-            <ul class="list-group components">
-                <p>Filters:</p>
-                <li class="list-group-item">
-                    <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>
-                    <ul class="collapse list-unstyled" id="schoolFilters">
-                        <li>
-                            <input type="text" class="form-control" id="schoolSearch" placeholder="School">
+            <form>
+                <fieldset>
+                    <legend>Filters</legend>
+                    <ul class="list-group components">
+                        <li class="list-group-item">
+                            <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>
+                            <ul class="collapse list-unstyled" id="schoolFilters">
+                                <li>
+                                    <input type="text" class="form-control" id="schoolSearch" placeholder="School">
+                                </li>
+                            </ul>
                         </li>
-                        <li class="alert alert-secondary">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>
-                            Biology
+                        <li class="list-group-item">
+                            <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>
+                            <div class="collapse" id="semesterFilters">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="wholeYearSwitch">
+                                    <label class="custom-control-label" for="wholeYearSwitch">Whole year</label>
+                                </div>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="sem1Switch">
+                                    <label class="custom-control-label" for="sem1Switch">Semester 1</label>
+                                </div>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="sem2Switch">
+                                    <label class="custom-control-label" for="sem2Switch">Semester 2</label>
+                                </div>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="summerSwitch">
+                                    <label class="custom-control-label" for="summerSwitch">Summer</label>
+                                </div>
+                            </div>
                         </li>
-                        <li class="alert alert-secondary">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>
-                            Computer Science
+                        <li class="list-group-item">
+                            <label for="numberCredits">
+                                <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>
+                            </label>
+                            <div class="collapse" id="creditWorthFilters">
+                                <input type="number" placeholder="No. credits" id="numberCredits" name="numberCredits">
+                            </div>
                         </li>
                     </ul>
-                </li>
-                <li class="list-group-item">
-                    <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>
-                    <div class="collapse" id="semesterFilters">
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="wholeYearSwitch">
-                            <label class="custom-control-label" for="wholeYearSwitch">Whole year</label>
-                        </div>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="sem1Switch">
-                            <label class="custom-control-label" for="sem1Switch">Semester 1</label>
-                        </div>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="sem2Switch">
-                            <label class="custom-control-label" for="sem2Switch">Semester 2</label>
-                        </div>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="summerSwitch">
-                            <label class="custom-control-label" for="summerSwitch">Summer</label>
-                        </div>
+                    <div class="container d-flex justify-content-end">
+                        <button type="submit" class="btn btn-info">Apply</button>
                     </div>
-                </li>
-                <li class="list-group-item">
-                    <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>
-                    <div class="collapse" id="creditWorthFilters">
-                        <input type="number" placeholder="No. credits">
-                    </div>
-                </li>
-            </ul>
+                </fieldset>
+            </form>
+
+<!--            <ul class="list-group components">-->
+<!--                <p>Filters:</p>-->
+<!--                <li class="list-group-item">-->
+<!--                    <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>-->
+<!--                    <ul class="collapse list-unstyled" id="schoolFilters">-->
+<!--                        <li>-->
+<!--                            <input type="text" class="form-control" id="schoolSearch" placeholder="School">-->
+<!--                        </li>-->
+<!--                        <li class="alert alert-secondary">-->
+<!--                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>-->
+<!--                            Biology-->
+<!--                        </li>-->
+<!--                        <li class="alert alert-secondary">-->
+<!--                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>-->
+<!--                            Computer Science-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+<!--                <li class="list-group-item">-->
+<!--                    <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>-->
+<!--                    <div class="collapse" id="semesterFilters">-->
+<!--                        <div class="custom-control custom-switch">-->
+<!--                            <input type="checkbox" class="custom-control-input" id="wholeYearSwitch">-->
+<!--                            <label class="custom-control-label" for="wholeYearSwitch">Whole year</label>-->
+<!--                        </div>-->
+<!--                        <div class="custom-control custom-switch">-->
+<!--                            <input type="checkbox" class="custom-control-input" id="sem1Switch">-->
+<!--                            <label class="custom-control-label" for="sem1Switch">Semester 1</label>-->
+<!--                        </div>-->
+<!--                        <div class="custom-control custom-switch">-->
+<!--                            <input type="checkbox" class="custom-control-input" id="sem2Switch">-->
+<!--                            <label class="custom-control-label" for="sem2Switch">Semester 2</label>-->
+<!--                        </div>-->
+<!--                        <div class="custom-control custom-switch">-->
+<!--                            <input type="checkbox" class="custom-control-input" id="summerSwitch">-->
+<!--                            <label class="custom-control-label" for="summerSwitch">Summer</label>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--                <li class="list-group-item">-->
+<!--                    <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>-->
+<!--                    <div class="collapse" id="creditWorthFilters">-->
+<!--                        <input type="number" placeholder="No. credits">-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--            <div class="container d-flex justify-content-end">-->
+<!--                <button type="submit" class="btn btn-info">Apply</button>-->
+<!--            </div>-->
         </nav>
 
         <!-- CONTENT -->
