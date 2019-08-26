@@ -103,15 +103,6 @@ def query_db():
     cursor.execute(
         'SELECT source_module, TargetModule, `type` FROM complete_requisites;')
     raw_links = cursor.fetchall()
-    # fetch the schools if we haven't already
-    global school_dict
-    if len(school_dict) == 0:
-        cursor.execute(
-            'SELECT * FROM school;'
-        )
-        id_school_tuples = cursor.fetchall()
-        school_id_tuples = [(name, int_id) for (int_id, name) in id_school_tuples]
-        school_dict = dict(school_id_tuples)
     # update the di-graph
     add_nodes_to_graph(raw_nodes)
     add_links_to_graph(raw_links)
@@ -131,7 +122,14 @@ def network_template(template_name: str):
 @app.route('/', methods=['GET'])
 @app.route('/index.html', methods=['GET'])
 def index():
-    return network_template("index.html")
+    nodes, links = query_db()
+    network = '{"nodes": %s, "links": %s}' % (nodes, links)
+    json_network = json.loads(network)
+    json_school_dict = get_school_dict()
+    return render_template("index.html",
+                           network=json_network,
+                           school_dict=json_school_dict)
+    # return network_template("index.html")
 
 
 @app.route('/admin.html', methods=['GET'])
@@ -149,9 +147,6 @@ def data():
 
 @app.route('/fd-graph', methods=['GET'])
 def fd_graph():
-    # nodes, links = query_db()
-    # network = '{"nodes": %s, "links": %s}' % (nodes, links)
-    # return render_template('fd-graph.html', network=json.loads(network))
     return network_template('fd-graph.html')
 
 
@@ -180,6 +175,22 @@ def graph_paths():
                % (['"%s"' % node for node in involved_nodes], json_path_parts)
     json_str = json_str.replace("'", "")
     return json.loads(json_str)
+
+
+@app.route('/school-ids', methods=['GET'])
+def get_school_dict():
+    cursor = db_conn.cursor()
+    # fetch the schools if we haven't already
+    global school_dict
+    if len(school_dict) == 0:
+        cursor.execute(
+            'SELECT * FROM school;'
+        )
+        id_school_tuples = cursor.fetchall()
+        school_id_tuples = [(name, int_id) for (int_id, name) in
+                            id_school_tuples]
+        school_dict = dict(school_id_tuples)
+    return json.loads(json.dumps(school_dict))
 
 
 if __name__ == '__main__':

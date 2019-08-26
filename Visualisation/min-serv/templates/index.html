@@ -32,8 +32,10 @@
                             <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>
                             <ul class="collapse list-unstyled" id="schoolFilters">
                                 <li>
-                                    <input type="text" class="form-control" id="schoolSearch" placeholder="School">
+                                    <!-- This is used to search the list of schools -->
+                                    <input type="text" class="form-control" id="schoolSearch" placeholder="Search schools">
                                 </li>
+                                <!-- More <li> tags are appended here through jquery -->
                             </ul>
                         </li>
                         <li class="list-group-item">
@@ -58,9 +60,7 @@
                             </div>
                         </li>
                         <li class="list-group-item">
-                            <label for="numberCredits">
-                                <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>
-                            </label>
+                            <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>
                             <div class="collapse" id="creditWorthFilters">
                                 <input type="number" placeholder="No. credits" id="numberCredits" name="numberCredits">
                             </div>
@@ -71,56 +71,6 @@
                     </div>
                 </fieldset>
             </form>
-
-<!--            <ul class="list-group components">-->
-<!--                <p>Filters:</p>-->
-<!--                <li class="list-group-item">-->
-<!--                    <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>-->
-<!--                    <ul class="collapse list-unstyled" id="schoolFilters">-->
-<!--                        <li>-->
-<!--                            <input type="text" class="form-control" id="schoolSearch" placeholder="School">-->
-<!--                        </li>-->
-<!--                        <li class="alert alert-secondary">-->
-<!--                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>-->
-<!--                            Biology-->
-<!--                        </li>-->
-<!--                        <li class="alert alert-secondary">-->
-<!--                            <a href="#" class="close" data-dismiss="alert" aria-label="clear">&times;</a>-->
-<!--                            Computer Science-->
-<!--                        </li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-<!--                <li class="list-group-item">-->
-<!--                    <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>-->
-<!--                    <div class="collapse" id="semesterFilters">-->
-<!--                        <div class="custom-control custom-switch">-->
-<!--                            <input type="checkbox" class="custom-control-input" id="wholeYearSwitch">-->
-<!--                            <label class="custom-control-label" for="wholeYearSwitch">Whole year</label>-->
-<!--                        </div>-->
-<!--                        <div class="custom-control custom-switch">-->
-<!--                            <input type="checkbox" class="custom-control-input" id="sem1Switch">-->
-<!--                            <label class="custom-control-label" for="sem1Switch">Semester 1</label>-->
-<!--                        </div>-->
-<!--                        <div class="custom-control custom-switch">-->
-<!--                            <input type="checkbox" class="custom-control-input" id="sem2Switch">-->
-<!--                            <label class="custom-control-label" for="sem2Switch">Semester 2</label>-->
-<!--                        </div>-->
-<!--                        <div class="custom-control custom-switch">-->
-<!--                            <input type="checkbox" class="custom-control-input" id="summerSwitch">-->
-<!--                            <label class="custom-control-label" for="summerSwitch">Summer</label>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </li>-->
-<!--                <li class="list-group-item">-->
-<!--                    <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>-->
-<!--                    <div class="collapse" id="creditWorthFilters">-->
-<!--                        <input type="number" placeholder="No. credits">-->
-<!--                    </div>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--            <div class="container d-flex justify-content-end">-->
-<!--                <button type="submit" class="btn btn-info">Apply</button>-->
-<!--            </div>-->
         </nav>
 
         <!-- CONTENT -->
@@ -133,7 +83,6 @@
                     </button>
 
                     <ul class="nav nav-pills justify-content-end">
-                        <!-- TODO: wire up the hrefs -->
                         <li class="nav-item">
                             <a class="nav-link active" href="#">Overview</a>
                         </li>
@@ -161,6 +110,58 @@
         });
     </script>
 
+    <!-- SCHOOL FILTERS -->
+
+    <script content="text/javascript">
+        const schoolDict = {{ school_dict|safe }};
+        const dictKeys = Object.keys(schoolDict);
+        let selectedSchools = [];
+
+        // create a <li> element for each key
+        let schoolFilterUl = $('ul#schoolFilters');
+        $.each(dictKeys, function (i) {
+            let li = $('<li/>')
+                .addClass("school-filter")
+                .appendTo(schoolFilterUl);
+            let anch = $('<a/>')
+                .addClass("text-light")
+                .attr("href", "#")
+                .on('click', addFilterAlert)
+                .text(dictKeys[i])
+                .appendTo(li);
+        });
+
+        let schoolSearch = $('#schoolSearch');
+        schoolSearch.on('keyup', function () {
+            // get the current value of the text field
+            let currentVal = $(this).val().toLowerCase();
+            $('.school-filter').filter(function () {
+                // filter the list items for ones that contain the current value
+                // and toggle `display: none` for the ones that don't
+                $(this).toggle($(this).text().toLowerCase().indexOf(currentVal) > -1)
+            });
+        });
+
+        function addFilterAlert(event) {
+            let school = $(event.target).text();
+            if (!selectedSchools.includes(school)) {
+                selectedSchools.push(school);
+                let filterAlert = $('<li/>')
+                    .addClass('alert')
+                    .addClass('alert-secondary')
+                    .text(school)
+                    .appendTo($('#schoolFilters'));
+                let filterClose = $('<a/>')
+                    .addClass('close')
+                    .attr('href', '#')
+                    .attr('data-dismiss', 'alert')
+                    .attr('aria-label', 'clear')
+                    .text('&times;')
+                    .appendTo(filterAlert);
+            }
+        }
+    </script>
+
     <!-- VISUALISATION -->
 
     <!-- Lodash -->
@@ -169,7 +170,7 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <link rel="stylesheet" href="../static/css/visualisation.css">
     <script>
-        const MY_DATA = {{ network|safe }};
+        const MY_DATA = {{ network|safe }};     // data from server through jinja2
     </script>
     <script src="../static/js/column-vis.js"></script>
 </body>
