@@ -30,13 +30,18 @@
                     <ul class="list-group components">
                         <li class="list-group-item">
                             <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>
-                            <ul class="collapse list-unstyled" id="schoolFilters">
-                                <li>
-                                    <!-- This is used to search the list of schools -->
-                                    <input type="text" class="form-control" id="schoolSearch" placeholder="Search schools">
-                                </li>
-                                <!-- More <li> tags are appended here through jquery -->
-                            </ul>
+<!--                            <ul class="collapse list-unstyled" id="schoolFilters">-->
+<!--                                <li>-->
+<!--                                    &lt;!&ndash; This is used to search the list of schools &ndash;&gt;-->
+<!--                                    <input type="text" class="form-control" id="schoolSearch" placeholder="Search schools">-->
+<!--                                </li>-->
+<!--                                &lt;!&ndash; More <li> tags are appended here through jquery &ndash;&gt;-->
+<!--                            </ul>-->
+                            <div class="collapse list-unstyled" id="schoolFilters">
+                                <!-- This is used to search the list of schools -->
+                                <input type="text" class="form-control" id="schoolSearch" placeholder="Search schools">
+                                <!-- More <div> tags are appended here through jquery -->
+                            </div>
                         </li>
                         <li class="list-group-item">
                             <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>
@@ -117,18 +122,37 @@
         const dictKeys = Object.keys(schoolDict);
         let selectedSchools = [];
 
-        // create a <li> element for each key
-        let schoolFilterUl = $('ul#schoolFilters');
+        // // create a <li> element for each key
+        // let schoolFilterUl = $('ul#schoolFilters');
+        // $.each(dictKeys, function (i) {
+        //     let li = $('<li/>')
+        //         .addClass("school-filter")
+        //         .appendTo(schoolFilterUl);
+        //     let anch = $('<a/>')
+        //         .addClass("text-light")
+        //         .attr("href", "#")
+        //         .on('click', addFilterAlert)
+        //         .text(dictKeys[i])
+        //         .appendTo(li);
+        // });
+
+        let schoolFilterDiv = $('div#schoolFilters');
         $.each(dictKeys, function (i) {
-            let li = $('<li/>')
+            let div = $('<div/>')
+                .addClass("custom-control")
+                .addClass("custom-checkbox")
                 .addClass("school-filter")
-                .appendTo(schoolFilterUl);
-            let anch = $('<a/>')
-                .addClass("text-light")
-                .attr("href", "#")
-                .on('click', addFilterAlert)
+                .appendTo(schoolFilterDiv);
+            let cbx = $('<input/>')
+                .attr("type", "checkbox")
+                .addClass("custom-control-input")
+                .attr("id", dictKeys[i] + "-filter")
+                .appendTo(div);
+            let lbl = $('<label/>')
+                .addClass("custom-control-label")
+                .attr("for", dictKeys[i] + "-filter")
                 .text(dictKeys[i])
-                .appendTo(li);
+                .appendTo(div);
         });
 
         let schoolSearch = $('#schoolSearch');
@@ -142,24 +166,24 @@
             });
         });
 
-        function addFilterAlert(event) {
-            let school = $(event.target).text();
-            if (!selectedSchools.includes(school)) {
-                selectedSchools.push(school);
-                let filterAlert = $('<li/>')
-                    .addClass('alert')
-                    .addClass('alert-secondary')
-                    .text(school)
-                    .appendTo($('#schoolFilters'));
-                let filterClose = $('<a/>')
-                    .addClass('close')
-                    .attr('href', '#')
-                    .attr('data-dismiss', 'alert')
-                    .attr('aria-label', 'clear')
-                    .text('&times;')
-                    .appendTo(filterAlert);
-            }
-        }
+        // function addFilterAlert(event) {
+        //     let school = $(event.target).text();
+        //     if (!selectedSchools.includes(school)) {
+        //         selectedSchools.push(school);
+        //         let filterAlert = $('<li/>')
+        //             .addClass('alert')
+        //             .addClass('alert-secondary')
+        //             .text(school)
+        //             .appendTo($('#schoolFilters'));
+        //         let filterClose = $('<a/>')
+        //             .addClass('close')
+        //             .attr('href', '#')
+        //             .attr('data-dismiss', 'alert')
+        //             .attr('aria-label', 'clear')
+        //             .text('&times;')
+        //             .appendTo(filterAlert);
+        //     }
+        // }
     </script>
 
     <!-- VISUALISATION -->
