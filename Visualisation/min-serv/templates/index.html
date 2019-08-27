@@ -30,13 +30,6 @@
                     <ul class="list-group components">
                         <li class="list-group-item">
                             <a href="#schoolFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Schools:</a>
-<!--                            <ul class="collapse list-unstyled" id="schoolFilters">-->
-<!--                                <li>-->
-<!--                                    &lt;!&ndash; This is used to search the list of schools &ndash;&gt;-->
-<!--                                    <input type="text" class="form-control" id="schoolSearch" placeholder="Search schools">-->
-<!--                                </li>-->
-<!--                                &lt;!&ndash; More <li> tags are appended here through jquery &ndash;&gt;-->
-<!--                            </ul>-->
                             <div class="collapse list-unstyled" id="schoolFilters">
                                 <!-- This is used to search the list of schools -->
                                 <input type="text" class="form-control" id="schoolSearch" placeholder="Search schools">
@@ -46,20 +39,21 @@
                         <li class="list-group-item">
                             <a href="#semesterFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Semester:</a>
                             <div class="collapse" id="semesterFilters">
+                                <!-- TODO: generate this through jquery (especially due to values)? -->
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="wholeYearSwitch">
+                                    <input type="checkbox" class="custom-control-input" id="wholeYearSwitch" name="semesters[]" value="4" checked>
                                     <label class="custom-control-label" for="wholeYearSwitch">Whole year</label>
                                 </div>
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="sem1Switch">
+                                    <input type="checkbox" class="custom-control-input" id="sem1Switch" name="semesters[]" value="1" checked>
                                     <label class="custom-control-label" for="sem1Switch">Semester 1</label>
                                 </div>
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="sem2Switch">
+                                    <input type="checkbox" class="custom-control-input" id="sem2Switch" name="semesters[]" value="2" checked>
                                     <label class="custom-control-label" for="sem2Switch">Semester 2</label>
                                 </div>
                                 <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" id="summerSwitch">
+                                    <input type="checkbox" class="custom-control-input" id="summerSwitch" name="semesters[]" value="3" checked>
                                     <label class="custom-control-label" for="summerSwitch">Summer</label>
                                 </div>
                             </div>
@@ -67,7 +61,8 @@
                         <li class="list-group-item">
                             <a href="#creditWorthFilters" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Credit worth:</a>
                             <div class="collapse" id="creditWorthFilters">
-                                <input type="number" placeholder="No. credits" id="numberCredits" name="numberCredits">
+                                <!-- TODO: have this as a slider instead? -->
+                                <!-- CHECKBOXES FOR EACH CREDIT VALUE, GENERATED THROUGH JQUERY-->
                             </div>
                         </li>
                     </ul>
@@ -115,26 +110,13 @@
         });
     </script>
 
+
     <!-- SCHOOL FILTERS -->
 
     <script content="text/javascript">
+        // dict from school names to ids, supplied by jinja2
         const schoolDict = {{ school_dict|safe }};
         const dictKeys = Object.keys(schoolDict);
-        let selectedSchools = [];
-
-        // // create a <li> element for each key
-        // let schoolFilterUl = $('ul#schoolFilters');
-        // $.each(dictKeys, function (i) {
-        //     let li = $('<li/>')
-        //         .addClass("school-filter")
-        //         .appendTo(schoolFilterUl);
-        //     let anch = $('<a/>')
-        //         .addClass("text-light")
-        //         .attr("href", "#")
-        //         .on('click', addFilterAlert)
-        //         .text(dictKeys[i])
-        //         .appendTo(li);
-        // });
 
         let schoolFilterDiv = $('div#schoolFilters');
         $.each(dictKeys, function (i) {
@@ -147,6 +129,8 @@
                 .attr("type", "checkbox")
                 .addClass("custom-control-input")
                 .attr("id", dictKeys[i] + "-filter")
+                .attr("name", "schoolIds[]")
+                .attr("value", schoolDict[dictKeys[i]])
                 .appendTo(div);
             let lbl = $('<label/>')
                 .addClass("custom-control-label")
@@ -165,26 +149,37 @@
                 $(this).toggle($(this).text().toLowerCase().indexOf(currentVal) > -1)
             });
         });
-
-        // function addFilterAlert(event) {
-        //     let school = $(event.target).text();
-        //     if (!selectedSchools.includes(school)) {
-        //         selectedSchools.push(school);
-        //         let filterAlert = $('<li/>')
-        //             .addClass('alert')
-        //             .addClass('alert-secondary')
-        //             .text(school)
-        //             .appendTo($('#schoolFilters'));
-        //         let filterClose = $('<a/>')
-        //             .addClass('close')
-        //             .attr('href', '#')
-        //             .attr('data-dismiss', 'alert')
-        //             .attr('aria-label', 'clear')
-        //             .text('&times;')
-        //             .appendTo(filterAlert);
-        //     }
-        // }
     </script>
+
+
+    <!-- CREDIT FILTERS -->
+
+    <script>
+        // array of credit values in ascending order, supplied by jinja2
+        const creditVals = {{ credit_vals|safe }};
+        let creditFilterDiv = $('div#creditWorthFilters');
+        $.each(creditVals, function (i) {
+            let div = $('<div/>')
+                .addClass("custom-control")
+                .addClass("custom-checkbox")
+                .addClass("credit-filter")
+                .appendTo(creditFilterDiv);
+            let cbx = $('<input/>')
+                .attr("type", "checkbox")
+                .addClass("custom-control-input")
+                .attr("id", creditVals[i] + "-credit-filter")
+                .attr("name", "creditVals[]")
+                .attr("value", creditVals[i])
+                .prop("checked", true)
+                .appendTo(div);
+            let lbl = $('<label/>')
+                .addClass("custom-control-label")
+                .attr("for", creditVals[i] + "-credit-filter")
+                .text(creditVals[i])
+                .appendTo(div);
+        })
+    </script>
+
 
     <!-- VISUALISATION -->
 

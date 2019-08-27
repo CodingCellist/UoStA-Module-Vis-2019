@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, abort
 from flaskext.mysql import MySQL
 import json
 import networkx as nx
@@ -21,8 +21,12 @@ mariadb.init_app(app)
 # uses NetworkX for now, if we ever experience slowdown, look at graph-tool
 dg = nx.DiGraph()
 
+# school id to name
+school_dict_id_name = {}
 # school name to id
-school_dict = {}
+school_dict_name_id = {}
+# distinct possible credit values
+all_credit_vals = []
 
 
 def add_nodes_to_graph(nodes):
@@ -41,7 +45,7 @@ def add_links_to_graph(links):
 
 
 def find_paths_to_node(node):
-    """convert
+    """
     Use the directed graph to find all the modules reachable via the requisites
     from the given node, at least staying at the same level or going down one,
     as well as all the edges involved in any of these traversals.
@@ -94,11 +98,74 @@ def get_group(module_code):
         return 3
 
 
-def query_db():
+def fetch_modules(cursor, school_ids=None, semesters=None, credit_vals=None):
+    module_query = 'SELECT DISTINCT `ModuleCode` FROM `complete_modules`'
+    first = True
+    # handle school ids
+    if not school_ids:
+        pass
+    else:
+        if first:
+            module_query += ' WHERE '
+            first = False
+        module_query += '('     # bracket the condition
+        module_query += '`SchoolName` IN '
+        module_query += '('     # open the selection
+        # get the unique school names for each id
+        schools_names = \
+            list(set(map(lambda s_id: school_dict_id_name[s_id], school_ids)))
+        module_query += str(schools_names)[1:-1]     # str(list) w/o []s
+        module_query += ')'     # close the selection
+        module_query += ')'     # bracket the condition
+        print('\tfetch_modules:', module_query)
+    # handle semesters
+    if not semesters:
+        pass
+    else:
+        if first:
+            module_query += ' WHERE '
+            first = False
+        else:
+            module_query += ' AND '
+        module_query += '('     # bracket the condition
+        module_query += '`semester_number` IN '
+        module_query += '('     # open the selection
+        module_query += str(semesters)[1:-1]        # str(list) w/o []s
+        module_query += ')'     # close the selection
+        module_query += ')'     # bracket the condition
+    # handle credit values
+    if not credit_vals:
+        pass
+    else:
+        if first:
+            module_query += ' WHERE '
+            first = False
+        else:
+            module_query += ' AND '
+        module_query += '('     # bracket the condition
+        module_query += '`ModuleSCOTCATCredits` IN '
+        module_query += '('     # open the selection
+        module_query += str(credit_vals)[1:-1]      # str(list) w/o []s
+        module_query += ')'     # close the selection
+        module_query += ')'     # bracket the condition
+    # close the query
+    module_query += ';'
+    # fetch the nodes
+    cursor.execute(module_query)
+    raw_nodes = cursor.fetchall()
+    return raw_nodes
+
+
+def query_db(school_ids=None, semesters=None, credit_vals=None):
     cursor = db_conn.cursor()
     # fetch the modules
-    cursor.execute('SELECT `code` FROM `module`;')
-    raw_nodes = cursor.fetchall()
+    # cursor.execute('SELECT `code` FROM `module`;')
+    # raw_nodes = cursor.fetchall()
+    raw_nodes = fetch_modules(cursor,
+                              school_ids=school_ids,
+                              semesters=semesters,
+                              credit_vals=credit_vals
+                              )
     # fetch the requisites
     cursor.execute(
         'SELECT source_module, TargetModule, `type` FROM complete_requisites;')
@@ -112,6 +179,35 @@ def query_db():
     return nodes, links
 
 
+def check_school_ids(school_ids):
+    if not school_ids:
+        return True
+    for school_id in school_ids:
+        if school_id not in school_dict_name_id.values():
+            return False
+    return True
+
+
+def check_semesters(semesters):
+    if not semesters:
+        return True
+    sem_range = range(1, 5)
+    for semester in semesters:
+        if semester not in sem_range:
+            return False
+    return True
+
+
+def check_credit_vals(credit_vals):
+    if not credit_vals:
+        return True
+    valid_credit_range = range(0, 121)
+    for credit_val in credit_vals:
+        if credit_val not in valid_credit_range:
+            return False
+    return True
+
+
 def network_template(template_name: str):
     nodes, links = query_db()
     network = '{"nodes": %s, "links": %s}' % (nodes, links)
@@ -122,27 +218,42 @@ def network_template(template_name: str):
 @app.route('/', methods=['GET'])
 @app.route('/index.html', methods=['GET'])
 def index():
-    nodes, links = query_db()
+    # load things _FIRST!_
+    json_school_dict = get_school_dict()
+    get_distinct_credit_vals()
+    # handle request args if there are any
+    if len(request.args) > 0:
+        # get the request arguments and turn them to ints as they should be
+        school_ids = list(map(int, request.args.getlist("schoolIds[]")))
+        semesters = list(map(int, request.args.getlist("semesters[]")))
+        credit_vals = list(map(int, request.args.getlist("creditVals[]")))
+        # sanity check since we don't have prepared statements
+        all_ok = True
+        all_ok &= check_school_ids(school_ids)
+        all_ok &= check_semesters(semesters)
+        all_ok &= check_credit_vals(credit_vals)
+        # if all is not okay, abort with status 400 (bad request)
+        if not all_ok:
+            abort(400)
+        nodes, links = query_db(school_ids=school_ids,
+                                semesters=semesters,
+                                credit_vals=credit_vals)
+    else:
+        # if there are no request args, query the db without filtering
+        nodes, links = query_db()
+    # format things to json
     network = '{"nodes": %s, "links": %s}' % (nodes, links)
     json_network = json.loads(network)
-    json_school_dict = get_school_dict()
     return render_template("index.html",
                            network=json_network,
-                           school_dict=json_school_dict)
+                           school_dict=json_school_dict,
+                           credit_vals=all_credit_vals)
     # return network_template("index.html")
 
 
 @app.route('/admin.html', methods=['GET'])
 def db_admin():
     return render_template("admin.html")
-
-
-@app.route('/data', methods=['GET'])
-def data():
-    nodes, links = query_db()
-    network = '{"nodes": %s, "links": %s}' % (nodes, links)
-    # print(network)
-    return json.loads(network)
 
 
 @app.route('/fd-graph', methods=['GET'])
@@ -177,20 +288,54 @@ def graph_paths():
     return json.loads(json_str)
 
 
-@app.route('/school-ids', methods=['GET'])
+#################################
+# ROUTES FOR SUPPLYING RAW DATA #
+#################################
+
+
+@app.route('/data', methods=['GET'])
+def data():
+    nodes, links = query_db()
+    network = '{"nodes": %s, "links": %s}' % (nodes, links)
+    # print(network)
+    return json.loads(network)
+
+
+@app.route('/data/school-ids', methods=['GET'])
 def get_school_dict():
     cursor = db_conn.cursor()
-    # fetch the schools if we haven't already
-    global school_dict
-    if len(school_dict) == 0:
+    # fetch the schools if we haven't already done so
+    global school_dict_name_id
+    if len(school_dict_name_id) == 0:
         cursor.execute(
-            'SELECT * FROM school;'
+            'SELECT * FROM `school`;'
         )
         id_school_tuples = cursor.fetchall()
+        # cursor.fetchall returns a tuple of tuples, not a list
+        id_school_tuple_list = [(int_id, name) for (int_id, name) in id_school_tuples]
+        # mapping int_id --> name
+        global school_dict_id_name
+        school_dict_id_name = dict(id_school_tuple_list)
+        # mapping name --> int_id
         school_id_tuples = [(name, int_id) for (int_id, name) in
-                            id_school_tuples]
-        school_dict = dict(school_id_tuples)
-    return json.loads(json.dumps(school_dict))
+                            id_school_tuple_list]
+        school_dict_name_id = dict(school_id_tuples)
+    return json.loads(json.dumps(school_dict_name_id))
+
+
+@app.route('/data/credit-vals', methods=['GET'])
+def get_distinct_credit_vals():
+    cursor = db_conn.cursor()
+    # fetch the distinct credit values if we haven't already done so
+    global all_credit_vals
+    if len(all_credit_vals) == 0:
+        cursor.execute(
+            'SELECT DISTINCT `credit_worth` FROM `module`;'
+        )
+        all_credit_vals = cursor.fetchall()
+        all_credit_vals = [t[0] for t in all_credit_vals]
+        all_credit_vals.sort()
+    return json.loads('{"allCreditVals": %s}' % all_credit_vals)
 
 
 if __name__ == '__main__':

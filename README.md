@@ -31,6 +31,8 @@ W.I.P.
 - [x] Webpage. Try Bootstrap  
 - [x] Connect the website up to the data  
 - [ ] Connect the filters up to the data  
+  - [x] Filter the nodes/modules  
+  - [ ] Filter the links/requisites  
 - [ ] Modify the SVG-container based on data?...  
 - [ ] ... or give it "infinite" height in some way?  
 - [ ] Some sort of "module shopping cart"  
