@@ -1,9 +1,30 @@
-// Node object to associate the `returnNodes` function with
+/**
+ * Visualisation of the modules and requisites of the University of St Andrews
+ * using D3JS. Each module is represented as a rectangle with text inside and
+ * each requisite as a cubic bezier curve connecting two rects. Pre-, Co-, and
+ * Anti-requisites are coloured green, blue, and red respectively. On mouse-
+ * over, the visualisation highlights the links and nodes relevant to the node
+ * being moused-over.
+ *
+ * @summary Column-oriented visualisation of the UoStA modules and requisites
+ * @author Thomas E. Hansen
+ */
+
+
+/**
+ * Node object to associate the `returnNodes` function with.
+ *
+ * @param id The id of the node -- The module code.
+ * @param group DEPRECATED. Used for the force-directed graphs.
+ */
 function Node(id, group) {
     this.id = id;
     this.group = group;
+    // FixMe: if the force-directed drafts are discarded, the `group` field
+    // FixMe: should be removed from here and lines 19 and 20
 }
 
+// make sure each `Node` has the `returnNodes` function, used to find ancestors
 Node.prototype.returnNodes = returnNodes;
 
 // print the data put into `index.html` by jinja2
