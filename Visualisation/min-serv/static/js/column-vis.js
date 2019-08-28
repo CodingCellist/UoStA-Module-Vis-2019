@@ -219,10 +219,6 @@ let cubicLinks = linkGroups.selectAll("myCubicLinks")
 
 // helper function to find all children of the given node
 function returnNodes(nodeList, linkList) {
-    // if (nodeList.includes(this)) {
-    //     // if we've already "traversed" this node, return
-    //     return {"nodeList": nodeList, "linkList": linkList};
-    // } else {
     if (!nodeList.includes(this)) {
         // add the current node to the nodeList
         nodeList.push(this);
@@ -231,8 +227,8 @@ function returnNodes(nodeList, linkList) {
         let connectedLinks =
             MY_DATA.links
                 .filter(function (link) {
-                    return link.target === nodeID;  // finds the children
-                    // return link.source === nodeID;  // finds the parents
+                    return link.target === nodeID;  // finds the paths ending here
+                    // return link.source === nodeID;  // finds the links starting here
                 });
         // add the connected links not already in the linkList to it
         connectedLinks.forEach(function (link) {
@@ -244,8 +240,8 @@ function returnNodes(nodeList, linkList) {
         let connectedIds =
             connectedLinks
                 .map(function (link) {
-                    return link.source;     // finds the children
-                    // return link.target;  // finds the parents
+                    return link.source;     // w. "finds the paths ending here"
+                    // return link.target;  // w. "finds the links starting here"
                 })
         ;
         // find the `Node` objects the connectedIds refer to
@@ -265,6 +261,7 @@ function returnNodes(nodeList, linkList) {
 // helper function returning a string of `ancestor-of-` classes for a given
 // node
 function ancestorClasses(node) {
+    if (node === undefined || node === null) return "";
     const prefix = "ancestor-of-";
     let classes = "";
     let ancestorClasses = _.map(node.ancestorOf, function (ancestor) {
@@ -280,11 +277,13 @@ function ancestorClasses(node) {
 // EVENTS //
 ////////////
 
+// highlight all the ancestors on mouseover
 function mouseover(d) {
     svg.selectAll(".ancestor-of-" + d.id)
         .classed("highlighted", true)
 }
 
+// remove all highlighting on mouseout
 function mouseout() {
     svg.selectAll(".highlighted")
         .classed("highlighted", false);
