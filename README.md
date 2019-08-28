@@ -33,6 +33,7 @@ W.I.P.
 - [x] Connect the filters up to the data  
   - [x] Filter the nodes/modules  
   - [x] Filter the links/requisites  
+- [ ] Change the filters to submit nothing if all in a category are selected  
 - [ ] Modify the SVG-container based on data?...  
 - [ ] ... or give it "infinite" height in some way?  
 - [ ] Some sort of "module shopping cart"  
