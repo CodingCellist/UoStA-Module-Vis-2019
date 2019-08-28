@@ -153,7 +153,41 @@ def fetch_modules(cursor, school_ids=None, semesters=None, credit_vals=None):
     # fetch the nodes
     cursor.execute(module_query)
     raw_nodes = cursor.fetchall()
-    return raw_nodes
+    # return None as the module query if no filters were applied
+    if first:
+        return raw_nodes, None
+    # otherwise, return the filtering query
+    return raw_nodes, module_query
+
+
+def fetch_requisites(cursor, module_query=None):
+    requisite_query = \
+        'SELECT `source_module`, `TargetModule`, `type` ' \
+        'FROM `complete_requisites`'
+    if not module_query:
+        pass
+    else:
+        module_query = module_query[:-1]    # cut the `;` from the module query
+        requisite_query += ' WHERE '
+        requisite_query += '('              # bracket the 1st condition
+        requisite_query += '`source_module` IN '
+        requisite_query += '('              # bracket the sub-selection
+        requisite_query += module_query     # the query used to filter modules
+        requisite_query += ')'              # bracket the sub-selection
+        requisite_query += ')'              # bracket the 1st condition
+        requisite_query += ' AND '
+        requisite_query += '('              # bracket the 2nd condition
+        requisite_query += '`TargetModule` IN '
+        requisite_query += '('              # bracket the sub-selection
+        requisite_query += module_query     # the query used to filter modules
+        requisite_query += ')'              # bracket the sub-selection
+        requisite_query += ')'              # bracket the 2nd condition
+    # close the query
+    requisite_query += ';'
+    # fetch the requisites
+    cursor.execute(requisite_query)
+    raw_links = cursor.fetchall()
+    return raw_links
 
 
 def query_db(school_ids=None, semesters=None, credit_vals=None):
@@ -161,15 +195,18 @@ def query_db(school_ids=None, semesters=None, credit_vals=None):
     # fetch the modules
     # cursor.execute('SELECT `code` FROM `module`;')
     # raw_nodes = cursor.fetchall()
-    raw_nodes = fetch_modules(cursor,
-                              school_ids=school_ids,
-                              semesters=semesters,
-                              credit_vals=credit_vals
-                              )
+    raw_nodes, module_query = fetch_modules(cursor,
+                                            school_ids=school_ids,
+                                            semesters=semesters,
+                                            credit_vals=credit_vals
+                                            )
     # fetch the requisites
-    cursor.execute(
-        'SELECT source_module, TargetModule, `type` FROM complete_requisites;')
-    raw_links = cursor.fetchall()
+    # cursor.execute(
+    #     'SELECT source_module, TargetModule, `type`' \
+    #     'FROM complete_requisites;')
+    # raw_links = cursor.fetchall()
+    raw_links = fetch_requisites(cursor,
+                                 module_query=module_query)
     # update the di-graph
     add_nodes_to_graph(raw_nodes)
     add_links_to_graph(raw_links)

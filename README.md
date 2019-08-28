@@ -15,8 +15,8 @@ W.I.P.
 - [x] Populate database with BL requisites  
 - [x] Very basic server  
 - [x] Initial network visualisation  
-- [x] Highlight paths on mouseover  
-- [x] Fix highlighting (currently only does 2 levels, not all)  
+- [x] Highlight paths on mouseover  
+- [x] Fix highlighting (currently only does 2 levels, not all)  
 - [x] Make path-calculation server-side  
 - [x] Change circles to rects  
 - [x] Add labels (rects --> "textboxes")  
@@ -25,21 +25,21 @@ W.I.P.
 - [x] Change opacity based on highlighting  
 - [x] Change path width based on highlighting  
 - [x] Filters  
-  - [x] School/Subject  
+  - [x] School/Subject  
   - [x] By semester  
   - [x] By credit worth  
-- [x] Webpage. Try Bootstrap  
-- [x] Connect the website up to the data  
-- [ ] Connect the filters up to the data  
+- [x] Webpage. Try Bootstrap  
+- [x] Connect the website up to the data  
+- [x] Connect the filters up to the data  
   - [x] Filter the nodes/modules  
-  - [ ] Filter the links/requisites  
+  - [x] Filter the links/requisites  
 - [ ] Modify the SVG-container based on data?...  
 - [ ] ... or give it "infinite" height in some way?  
 - [ ] Some sort of "module shopping cart"  
   - [ ] (More interactivity)  
-- [ ] Forms for the database management stuff  
+- [ ] Forms for the database management stuff  
 - [ ] Wire up the database management stuff to the server  
 - [ ] Scrape the degree programmes (oh god...)  
-- [ ] Scrape more modules (OH GOD!...)  
+- [ ] Scrape more modules (OH GOD!...)  
 - [ ] The rest of this TODO-list  
 
