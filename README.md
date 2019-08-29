@@ -39,7 +39,7 @@ that, the project is split into two main sub-directories:
 The underlying database was built using MariaDB. It is based on the ER-diagram
 below:
 
-![latest ER-diagram](Database/ER_Diagram_LATEST.png "Latest ER-diagram")
+![latest ER-diagram](Database/ER_Diagram_LATEST.png)
 
 
 # Visualisation
