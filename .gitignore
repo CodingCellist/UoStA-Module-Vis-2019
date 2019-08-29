@@ -7,9 +7,6 @@
 # "Compiled" diagrams
 diagrams/
 
-# Screenshots
-*.png
-
 # Python virtual environments and cache
 venv/
 __pycache__/
