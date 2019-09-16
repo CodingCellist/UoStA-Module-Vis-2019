@@ -35,6 +35,73 @@ that, the project is split into two main sub-directories:
       website, as well as the HTML/JS source used for the various drafts
 
 
+# Install and run instructions
+Make sure Python 3.7 or later is installed on the machine.
+## Web scrapers
+- If you wish, create a new virtual environment by typing
+  ```
+  python3 -m virtualenv <virtual-environment-dir>
+  ```
+  and then
+  [activate it](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+
+1. `cd` into the `Database/python-scripts/` directory  
+2. Run the command
+   ```
+   pip3 install -r requirements.txt
+   ```
+   This will install the required packages  
+3. Run any of the scrapers by typing
+   ```
+   python3 <scraper-name.py>
+   ```
+   Note that the scrapers take arguments. To read these, pass the `-h` or
+   `--help` flag to them  
+
+## Minimal server
+- **Make sure the database is set up and populated, that the Flask MySQL
+  extension has been properly configured (in** `app.py` **), and that the
+  database is reachable by the server**
+- If you wish, create a new virtual environment by typing
+  ```
+  python3 -m virtualenv <virtual-environment-dir>
+  ```
+  and then
+  [activate it](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+
+1. `cd` into the `Visualisation/min-serv/` directory  
+2. Run the command
+   ```
+   pip3 install -r requirements.txt
+   ```
+   This will install the required packages  
+3. On Linux, export the `FLASK_APP` environment variable as `app.py` by running
+   ```
+   export FLASK_APP=app.py
+   ```
+   On Windows, if you are running the Command Prompt/CMD type
+   ```
+   C:\path\to\app>set FLASK_APP=hello.py
+   ```
+   or, if you are running PowerShell, type
+   ```
+   PS C:\path\to\app> $env:FLASK_APP = "hello.py"
+   ```
+   (taken from the
+   [Flask quickstart guide](https://flask.palletsprojects.com/en/1.1.x/quickstart/)
+4. To run the server, either run flask directly or through Python by using
+   ```
+   flask run
+   ```
+   or
+   ```
+   python3 -m flask run
+   ```
+   respectively
+5. You should now be able to open the webpage at the localhost-URL Flask
+   indicates
+
+
 # Database
 The underlying database was built using MariaDB. It is based on the ER-diagram
 below:
