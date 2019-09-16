@@ -7,7 +7,7 @@ SELECT
 	m.credit_worth AS `ModuleSCOTCATCredits`,
 	m.re_assessable AS `IsReassessable`,
 	m.description AS `ModuleDescription`
-FROM module AS m
+FROM `module` AS m
 JOIN taught_in AS ti
 ON ti.module_code = m.code
 JOIN school AS s
