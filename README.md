@@ -39,7 +39,7 @@ that, the project is split into two main sub-directories:
 The underlying database was built using MariaDB. It is based on the ER-diagram
 below:
 
-![latest ER-diagram](Database/ER_Diagram_LATEST.png)
+![latest ER-diagram](Database/ER-Diagram-LATEST.png)
 
 
 # Visualisation
@@ -92,20 +92,44 @@ they wanted to do that module.
 - [ ] Add a switch to change between showing requirements and consequences,
       i.e. which paths and nodes are highlighted  
   - [ ] Add a "both" option?  
+- [ ] Filter by modules taught at least this year, i.e. don't show old modules  
+  - [ ] Or potentially introduce range of years to show?
 - [ ] Change the filters to submit nothing if all in a category are selected  
+- [ ] Keep the filter state after they have been submitted  
 - [ ] Modify the SVG-container based on data?...  
-- [ ] ... or give it "infinite" height in some way?  
-- [ ] Some sort of "module shopping cart"  
-  - [ ] (More interactivity)  
-- [ ] Forms for the database management stuff  
+  - [ ] Have fixed dimensions (around: width=92.4 and height=17.5) which can
+        contain the font-size, then scale the SVG height to fit the column with
+        the greatest number of modules  
+- [ ] ~~... or give it "infinite" height in some way?~~  
+- [ ] More interactivity  
+  - [ ] Module details  
+  - [ ] Some sort of "module shopping cart"  
+- [ ] Alert if filtering school which contains requisites not shown in current
+      selection  
+- [ ] Integrate the force-directed network overview into the website  
+- [ ] Construct and integrate a hive-plot network overview into the website  
+  - see:
+  - [Hive Plots: Rationalised Network Visualisation - Farewell to hairballs](http://egweb.bcgsc.ca/)  
+  - [Mike Bostock's D3 hive plot example](https://bost.ocks.org/mike/hive/)  
+  - [Rich Morin's hive plot demo](https://gist.github.com/RichMorin/2117857)
+    (used for Mike Bostock's example)  
+- [ ] Forms and webpage for the database management and overview stuff  
+  - [ ] Viewing existing modules  
+  - [ ] Viewing existing module requisites  
+  - [ ] Module creation  
+  - [ ] Module modification (e.g. addition of requisite(s) or lecturer(s))  
 - [ ] Wire up the database management stuff to the server  
 - [ ] Scrape the degree programmes (oh god...)  
+- [ ] Module filtering based on programme selection(s)  
+- [ ] Programme matching based on module selection  
 - [ ] Scrape more modules (OH GOD!...)  
+  - [ ] Create an ID-module scraper  
 - [ ] The rest of this TODO-list
 
 
 # Tools, Libraries, and Guides Used
 ## Misc.
+- [UoStA module catalogue search](https://portal.st-andrews.ac.uk/catalogue/home.htm)
 - [Python 3.7](https://www.python.org/downloads/)
 
 ## Database
