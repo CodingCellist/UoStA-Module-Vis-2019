@@ -19,7 +19,7 @@ BEGIN
 	-- make sure the module's school exists, otherwise we cannot find its ID 
 	IF school_name NOT IN (SELECT `name` FROM teh6_2019_summer_project.school)
 	THEN
-		SIGNAL SQLSTATE '45001' SET message_text = "The specified school does not exist, please create it.";
+		SIGNAL SQLSTATE '45001' SET message_text = "The specified school does not exist, please check the name or create it.";
 	END IF;
 
 	-- create the year if it does not already exist
