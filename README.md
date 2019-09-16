@@ -159,7 +159,7 @@ they wanted to do that module.
 - [ ] Add a switch to change between showing requirements and consequences,
       i.e. which paths and nodes are highlighted  
   - [ ] Add a "both" option?  
-- [ ] Filter by modules taught at least this year, i.e. don't show old modules  
+- [ ] Filter by modules taught at least this year, i.e. don't show old modules  
   - [ ] Or potentially introduce range of years to show?  
 - [ ] Change the filters to submit nothing if all in a category are selected  
 - [ ] Keep the filter state after they have been submitted  
@@ -182,7 +182,7 @@ they wanted to do that module.
     (used for Mike Bostock's example)  
 - [ ] Forms and webpage for the database management and overview stuff  
   - [ ] Viewing existing modules  
-  - [ ] Viewing existing module requisites  
+  - [ ] Viewing existing module requisites  
   - [ ] Module creation  
   - [ ] Module modification (e.g. addition of requisite(s) or lecturer(s))  
 - [ ] Wire up the database management stuff to the server  
