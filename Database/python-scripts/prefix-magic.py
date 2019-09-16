@@ -9,7 +9,7 @@ import mysql.connector as mariadb
 
 
 def scrape(persist=False):
-    SCHOOL_CODE = "BOTH"
+    SCHOOL_CODE = "BOTH"    # search for both UG and PGT things
     url = "https://portal.st-andrews.ac.uk/catalogue/search?searchTerm=" + SCHOOL_CODE
     response = get(url)
     page = BeautifulSoup(response.text, 'html.parser')
@@ -41,7 +41,6 @@ def scrape(persist=False):
                                      user=user,
                                      password=password,
                                      database=database,
-                                     use_pure=True, # FixMe: remove this when `mysql-connector-python` 8.0.17 is released!
                                      get_warnings=True)
         if not connection.is_connected():
             print('ERROR: Failed to connect to the database.', file=sys.stderr)

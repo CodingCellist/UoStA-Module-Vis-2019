@@ -592,7 +592,6 @@ def sqlize(requisites, persist=False):
                                  user=user,
                                  password=password,
                                  database=database,
-                                 use_pure=True,
                                  get_warnings=True)
     if not connection.is_connected():
         print('ERROR: Failed to establish connection to the database.',
@@ -603,7 +602,7 @@ def sqlize(requisites, persist=False):
     try:
         for (code, academic_year, semester_number, ug_pre, pg_pre, ug_co, pg_co, ug_anti, pg_anti) in requisites:
             # print(code, academic_year, semester_number, ug_pre, pg_pre, ug_co, pg_co, ug_anti, pg_anti)
-            if code == 'CS3050':
+            if code == 'CS3050':    # skip the manually input test-module
                 continue
             sqlize_pre_reqs(database, cursor, persist,
                             code, academic_year, semester_number, ug_pre, pg_pre)
