@@ -160,7 +160,7 @@ they wanted to do that module.
       i.e. which paths and nodes are highlighted  
   - [ ] Add a "both" option?  
 - [ ] Filter by modules taught at least this year, i.e. don't show old modules  
-  - [ ] Or potentially introduce range of years to show?
+  - [ ] Or potentially introduce range of years to show?  
 - [ ] Change the filters to submit nothing if all in a category are selected  
 - [ ] Keep the filter state after they have been submitted  
 - [ ] Modify the SVG-container based on data?...  
