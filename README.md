@@ -5,8 +5,9 @@ This project is licensed under the terms of the GNU GPLv3 license.
 
 
 # Project Structure
-The top-level directory contains this README, the LICENSE, and the `.gitignore`.
-Apart from that, the project is split into two main sub-directories:  
+The top-level directory contains this README, the LICENSE, the REPORT, and the
+`.gitignore`. Apart from that, the project is split into two main
+sub-directories:  
 - `Database` -- contains all the files relevant to the database design,
   implementation, and data-population. Its sub-directories are:  
   - `dia` -- contains the raw `.dia`-files used for the ER-diagrams  
