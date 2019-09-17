@@ -88,7 +88,7 @@ Make sure Python 3.7 or later is installed on the machine.
    PS C:\path\to\app> $env:FLASK_APP = "hello.py"
    ```
    (taken from the
-   [Flask quickstart guide](https://flask.palletsprojects.com/en/1.1.x/quickstart/)
+   [Flask quickstart guide](https://flask.palletsprojects.com/en/1.1.x/quickstart/))
 4. To run the server, either run flask directly or through Python by using
    ```
    flask run
