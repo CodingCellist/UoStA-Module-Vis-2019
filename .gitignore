@@ -1,3 +1,6 @@
+# Database dumps
+db-dumps/
+
 # JetBrains IDE files
 .idea/
 
