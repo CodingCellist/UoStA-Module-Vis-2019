@@ -14,9 +14,6 @@ def scrape(school_code="CS", limit=None):
     url = "https://portal.st-andrews.ac.uk/catalogue/search?searchTerm=" + school_code
     response = get(url)
     page = BeautifulSoup(response.text, 'html.parser')
-    ###############################################
-    # Find semesters from tr instead of catalogue #
-    ###############################################
     rows = page.find_all("tr", role="row")
     rows = rows[1:]
     # for row in rows:
@@ -25,7 +22,7 @@ def scrape(school_code="CS", limit=None):
     links = page.findAll("a", href=re.compile(r"^/catalogue/View"), limit=limit)
     modules = []
     for link, row in tqdm(list(zip(links, rows))):
-        # for link, row in list(zip(links, rows)):
+    # for link, row in list(zip(links, rows)):
         link = link['href']
         module = BeautifulSoup(get("https://portal.st-andrews.ac.uk"+link).text, 'html.parser') #module page
         raw_academic_years = module.find("p", class_="lead").text # academic year text
@@ -54,9 +51,9 @@ def scrape(school_code="CS", limit=None):
             elif "Re-assessment:" in p.text:
                 re_assessable = str(int('No Re-assessment available' not in p.text))
             elif "As used by St Andrews" in p.text:
-                assessment_pattern_raw = p.text
+                assessment_pattern_raw = p.text    # could be used, but currently isn't
 
-            # new way of doing semesters
+            # new way of doing semesters: find them from tr instead of catalogue
             sem_details = row.findAll("td")[-1].text
             if 'Full Year' in sem_details:
                 semester_number = '4'
@@ -76,13 +73,7 @@ def scrape(school_code="CS", limit=None):
         }
 
         module_data = [module_code, module_title, semester_number, description,
-                       credit_worth,
-                       # pre_reqs, co_reqs, anti_reqs,
-                       academic_years,
-                       # assessment_pattern,
-                       re_assessable]
-        # TODO: ID modules
-        # TODO: that one biology module which isn't associated with biology
+                       credit_worth, academic_years, re_assessable]
         if 'ID' not in module_code[:2] and 'BL4232' not in module_code:
             modules.append(module)
 
@@ -102,13 +93,13 @@ def sqlize(modules, persist=False):
     create_id_module_sql = "CALL {}.create_id_module('%s', %s, '%s', '%s', %s, %s, '%s' %s)" \
         .format(database)
     for module in modules:
-        module_code 	= module['code']
-        module_name		= module['name']
-        academic_year	= module['academic_year']
-        scotcat_credits	= module['SCOTCAT_credits']
-        semester_number	= module['semester']
-        module_desc		= module['description']
-        is_reassessable	= module['re_assessable']
+        module_code     = module['code']
+        module_name     = module['name']
+        academic_year   = module['academic_year']
+        scotcat_credits = module['SCOTCAT_credits']
+        semester_number = module['semester']
+        module_desc     = module['description']
+        is_reassessable = module['re_assessable']
         param_tuple = (module_code, module_name, academic_year, scotcat_credits,
                        semester_number, module_desc, is_reassessable)
         print(create_catalogue_entry_sql % param_tuple)
@@ -122,7 +113,6 @@ def sqlize(modules, persist=False):
                                          user=user,
                                          password=password,
                                          database=database,
-                                         use_pure=True,  # FixMe: remove this when `mysql-connector-python` 8.0.17 is released!
                                          get_warnings=True)
             if not connection.is_connected():
                 print('ERROR: Failed to connect to the database.')

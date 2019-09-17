@@ -35,11 +35,78 @@ that, the project is split into two main sub-directories:
       website, as well as the HTML/JS source used for the various drafts
 
 
+# Install and run instructions
+Make sure Python 3.7 or later is installed on the machine.
+## Web scrapers
+- If you wish, create a new virtual environment by typing
+  ```
+  python3 -m virtualenv <virtual-environment-dir>
+  ```
+  and then
+  [activate it](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+
+1. `cd` into the `Database/python-scripts/` directory  
+2. Run the command
+   ```
+   pip3 install -r requirements.txt
+   ```
+   This will install the required packages  
+3. Run any of the scrapers by typing
+   ```
+   python3 <scraper-name.py>
+   ```
+   Note that the scrapers take arguments. To read these, pass the `-h` or
+   `--help` flag to them  
+
+## Minimal server
+- **Make sure the database is set up and populated, that the Flask MySQL
+  extension has been properly configured (in** `app.py` **), and that the
+  database is reachable by the server**
+- If you wish, create a new virtual environment by typing
+  ```
+  python3 -m virtualenv <virtual-environment-dir>
+  ```
+  and then
+  [activate it](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments)
+
+1. `cd` into the `Visualisation/min-serv/` directory  
+2. Run the command
+   ```
+   pip3 install -r requirements.txt
+   ```
+   This will install the required packages  
+3. On Linux, export the `FLASK_APP` environment variable as `app.py` by running
+   ```
+   export FLASK_APP=app.py
+   ```
+   On Windows, if you are running the Command Prompt/CMD type
+   ```
+   C:\path\to\app>set FLASK_APP=hello.py
+   ```
+   or, if you are running PowerShell, type
+   ```
+   PS C:\path\to\app> $env:FLASK_APP = "hello.py"
+   ```
+   (taken from the
+   [Flask quickstart guide](https://flask.palletsprojects.com/en/1.1.x/quickstart/))
+4. To run the server, either run flask directly or through Python by using
+   ```
+   flask run
+   ```
+   or
+   ```
+   python3 -m flask run
+   ```
+   respectively
+5. You should now be able to open the webpage at the localhost-URL Flask
+   indicates
+
+
 # Database
 The underlying database was built using MariaDB. It is based on the ER-diagram
 below:
 
-![latest ER-diagram](Database/ER_Diagram_LATEST.png)
+![latest ER-diagram](Database/ER-Diagram-LATEST.png)
 
 
 # Visualisation
@@ -92,20 +159,44 @@ they wanted to do that module.
 - [ ] Add a switch to change between showing requirements and consequences,
       i.e. which paths and nodes are highlighted  
   - [ ] Add a "both" option?  
+- [ ] Filter by modules taught at least this year, i.e. don't show old modules  
+  - [ ] Or potentially introduce range of years to show?  
 - [ ] Change the filters to submit nothing if all in a category are selected  
+- [ ] Keep the filter state after they have been submitted  
 - [ ] Modify the SVG-container based on data?...  
-- [ ] ... or give it "infinite" height in some way?  
-- [ ] Some sort of "module shopping cart"  
-  - [ ] (More interactivity)  
-- [ ] Forms for the database management stuff  
+  - [ ] Have fixed dimensions (around: width=92.4 and height=17.5) which can
+        contain the font-size, then scale the SVG height to fit the column with
+        the greatest number of modules  
+- [ ] ~~... or give it "infinite" height in some way?~~  
+- [ ] More interactivity  
+  - [ ] Module details  
+  - [ ] Some sort of "module shopping cart"  
+- [ ] Alert if filtering school which contains requisites not shown in current
+      selection  
+- [ ] Integrate the force-directed network overview into the website  
+- [ ] Construct and integrate a hive-plot network overview into the website  
+  - see:
+  - [Hive Plots: Rationalised Network Visualisation - Farewell to hairballs](http://egweb.bcgsc.ca/)  
+  - [Mike Bostock's D3 hive plot example](https://bost.ocks.org/mike/hive/)  
+  - [Rich Morin's hive plot demo](https://gist.github.com/RichMorin/2117857)
+    (used for Mike Bostock's example)  
+- [ ] Forms and webpage for the database management and overview stuff  
+  - [ ] Viewing existing modules  
+  - [ ] Viewing existing module requisites  
+  - [ ] Module creation  
+  - [ ] Module modification (e.g. addition of requisite(s) or lecturer(s))  
 - [ ] Wire up the database management stuff to the server  
 - [ ] Scrape the degree programmes (oh god...)  
+- [ ] Module filtering based on programme selection(s)  
+- [ ] Programme matching based on module selection  
 - [ ] Scrape more modules (OH GOD!...)  
+  - [ ] Create an ID-module scraper  
 - [ ] The rest of this TODO-list
 
 
 # Tools, Libraries, and Guides Used
 ## Misc.
+- [UoStA module catalogue search](https://portal.st-andrews.ac.uk/catalogue/home.htm)
 - [Python 3.7](https://www.python.org/downloads/)
 
 ## Database
