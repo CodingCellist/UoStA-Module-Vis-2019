@@ -50,6 +50,9 @@ in the future. Anyway, here is my layout and advice:
   could potentially be split into multiple branches, one for developing the
   visualisation page, one for developing the overview page, one for developing
   the datase admin page, etc.)
+- The LaTeX source used for the report is available in the `tex-src` branch.
+  Please keep it there, i.e. don't merge it into anything. It's mostly there in
+  case anyone would be interested or need it.
 
 
 # Install and run instructions
