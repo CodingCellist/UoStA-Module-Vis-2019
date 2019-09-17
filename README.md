@@ -34,6 +34,23 @@ that, the project is split into two main sub-directories:
     - `templates`-- contains the HTML source used for the visualisation and the
       website, as well as the HTML/JS source used for the various drafts
 
+## Git branches and contributing
+This is more a good practice/good advice section rather than set rules for
+contributing. However, like most good practice, there is a reason people use
+branches and I can almost guarantee that not using them will lead to headaches
+in the future. Anyway, here is my layout and advice:
+- Avoid pushing to `master` as much as possible. Instead, push to the relevant
+  branch (or create one if there isn't a suitable branch) and merge it with
+  `master`, e.g. through a pull request, once the work done is in a stable state  
+- Development on the database should be done on the `db-dev` branch  
+- Drafting of visualisations should be done in the `drafts` branch  
+- Development on the visualisation(s) beyond simple drafting, e.g. adding
+  filtering, should be done on the `vis-dev` branch
+- Development on the website should be done on the `website-dev` branch (which
+  could potentially be split into multiple branches, one for developing the
+  visualisation page, one for developing the overview page, one for developing
+  the datase admin page, etc.)
+
 
 # Install and run instructions
 Make sure Python 3.7 or later is installed on the machine.
