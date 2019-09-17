@@ -1,0 +1,52 @@
+\documentclass[12pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper]{geometry}
+\usepackage[dvipsnames, hyperref]{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage{url}
+
+\usepackage{hyperref}
+\hypersetup{
+    pdftitle={Visualisation of The University of St Andrews Undgraduate Modules and Requisites},
+    pdfauthor={Thomas Ekstr{\" o}m Hansen},
+    colorlinks=true,
+    linkcolor=Blue
+}
+
+\title{Visualisation of The University of St Andrews Undergraduate Modules and
+Requisites\\
+\large \vspace*{0.5em} Documentation and Design Process}
+
+\author{Thomas Ekstr{\" o}m Hansen}
+
+\date{Summer 2019}
+
+\begin{document}
+    \maketitle
+    
+    \tableofcontents
+    
+    \chapter{Introduction}
+    \input{chapters/introduction.tex}
+    
+    \chapter{Database Design and Implementation}
+    \input{chapters/database-design-and-implementation.tex}
+    
+    \chapter{Visualisation Design and Implementation}
+    \input{chapters/visualisation-design-and-implementation.tex}
+    
+    \chapter{Conclusion and Future Work}
+    \input{chapters/conclusion-and-future-work.tex}
+    
+    \chapter{Acknowledgements}
+    \input{chapters/acknowledgements.tex}
+    
+    \appendix
+    
+    \chapter{Relational Model}\label{app:rel-model}
+    \input{appendices/relational-model.tex}
+
+\end{document}

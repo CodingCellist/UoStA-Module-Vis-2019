@@ -1,0 +1,136 @@
+\textit{Note: In general, all integer IDs are auto-incremented.}
+
+\sffamily
+
+\section{School-relevant}
+school(\underline{id}: \texttt{INT UNSIGNED},
+name: \texttt{VARCHAR(127)})
+\\
+
+prefix(\underline{code}: \texttt{VARCHAR(2)},
+school\_id*: \texttt{INT UNSIGNED})
+\\
+
+programme\_school(\underline{school\_id}*: \texttt{INT UNSIGNED},
+\underline{school\_id}*: \texttt{INT UNSIGNED})
+\\
+
+\textit{Note: Modules keep track of their offering school.}
+
+\section{Programme-relevant}
+programme(\underline{id}: \texttt{INT UNSIGNED},
+name: \texttt{VARCHAR(127)},
+duration: \texttt{VARCHAR(63)},
+\`{}type\`{}: \texttt{VARCHAR(15)})
+\\
+
+requirement(\underline{id}: \texttt{INT UNSIGNED},
+min\_year\_of\_study: \texttt{TINYINT(1) UNSIGNED},\\
+max\_year\_of\_study: \texttt{TINYINT(1) UNSIGNED},
+programme\_id*: \texttt{INT UNSIGNED})
+\\
+
+\`{}group\`{}(\underline{id}: \texttt{INT UNSIGNED},
+min\_credits: \texttt{INT(3) UNSIGNED},
+max\_credits: \texttt{INT(3) UNSIGNED},
+min\_grade: \texttt{TINYINT(2) UNSIGNED},
+max\_grade: \texttt{TINYINT(2) UNSIGNED},
+requirement\_id*: \texttt{INT UNSIGNED})
+\\
+
+module\_group(\underline{group\_id}*: \texttt{INT UNSIGNED},
+\underline{module\_code}*: \texttt{VARCHAR(6)})
+\\
+
+\textit{Note: There are no tables for the relationships, as requirement and
+\`{}group\`{} keep track of what programme or requirement they belong to
+respectively; A module group is a disjunction of modules as part of a
+requirement (and should probably be renamed, along with \`{}group\`{}).}
+
+\section{Module-relevant}
+academic\_year(\underline{title}: \texttt{VARCHAR(9)})
+\\
+
+module(\underline{code}: \texttt{VARCHAR(6)},
+name: \texttt{VARCHAR(255)},
+description: \texttt{VARCHAR(2047)},
+credit\_worth: \texttt{INT(3) UNSIGNED},
+re\_assessable: \texttt{BOOL},
+external\_requirement: \texttt{TEXT},
+school\_id*: \texttt{INT UNSIGNED})
+\\
+
+graded\_through(\underline{module\_code}*: \texttt{VARCHAR(6)},
+\underline{assessment\_type}*: \texttt{VARCHAR(63)},
+\underline{academic\_year}*: \texttt{VARCHAR(9)},
+percentage: \texttt{TINYINT(3) UNSIGNED})
+\\
+
+assessment(\underline{\`{}type\`{}}: \texttt{VARCHAR(63)},
+description: \texttt{TINYTEXT})
+\\
+
+timetable(\underline{module\_code}*: \texttt{VARCHAR(6)},
+\underline{academic\_year}*: \texttt{VARCHAR(9)},\\
+\underline{url}: \texttt{VARCHAR(255)})
+\\
+
+time\_frame(\underline{module\_code}*: \texttt{VARCHAR(6)},
+\underline{\`{}start\`{}}: \texttt{DATE},
+\underline{\`{}end\`{}}: \texttt{DATE})
+
+    \subsection{Requisite-relevant}
+    requisite(\underline{id}: \texttt{INT UNSIGNED},
+    academic\_year*: \texttt{VARCHAR(9)},\\
+    semester\_number*: \texttt{TINYINT(1) UNSIGNED},
+    academic\_level: \texttt{VARCHAR(3)},\\
+    \`{}type\`{}: \texttt{VARCHAR(4)},
+    source\_module*: \texttt{VARCHAR(6)})
+    \\
+    
+    requisite\_group(\underline{group\_id}: \texttt{INT UNSIGNED},
+    requisite\_id*: \texttt{INT UNSIGNED})
+    \\
+    
+    disjunctive\_group(\underline{group\_id}*: \texttt{INT UNSIGNED},
+    \underline{module\_code}*: \texttt{VARCHAR(6)})
+    \\
+    
+    \textit{Note: Requisites keep track of the module they belong to; Requisite
+    groups keep track of the requisite they belong to and exist purely to
+    provide a requisite group ID.}
+
+    \pagebreak
+
+    \subsection{Teaching-relevant}
+    taught\_by(\underline{module\_code}*: \texttt{VARCHAR(6)},
+    \underline{lecturer\_uname}*: \texttt{VARCHAR(127)},\\
+    \underline{academic\_year}*: \texttt{VARCHAR(9)},
+    \underline{semester\_number}*: \texttt{TINYINT(1) UNSIGNED})
+    \\
+    
+    lecturer(\underline{user\_name}: \texttt{VARCHAR(127)},
+    title: \texttt{VARCHAR(15)},
+    first\_name: \texttt{VARCHAR(127)},
+    surname: \texttt{VARCHAR(127)})
+    \\
+    
+    taught\_in(\underline{module\_code}*: \texttt{VARCHAR(6)},
+    \underline{semester\_number}*: \texttt{TINYINT(1) UNSIGNED},
+    \underline{academic\_year}*: \texttt{VARCHAR(9)})
+    \\
+    
+    semester(\underline{\`{}number\`{}}: \texttt{TINYINT(1) UNSIGNED},
+    name: \texttt{VARCHAR(10)},\\
+    start\_month: \texttt{int(2) UNSIGNED},
+    end\_month: \texttt{INT(2) UNSIGNED})
+    \\
+    
+    taught\_through(\underline{module\_code}*: \texttt{VARCHAR(6)},
+    \underline{teaching\_type}*: \texttt{VARCHAR(63)},\\
+    \underline{academic\_year}*: \texttt{VARCHAR(9)},
+    hours: \texttt{SMALLINT(3) UNSIGNED})
+    \\
+    
+    teaching(\underline{\`{}type\`{}}: \texttt{VARCHAR(63)},
+    description: \texttt{VARCHAR(511)})
